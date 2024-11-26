@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+      "baseUrl": "src", 
+      "paths": {
+        "@components/*": ["components/*"], // Aliases for folders
+        "@pages/*": ["pages/*"],
+        "@utils/*": ["utils/*"]
+      }
+    },
+    "include": ["src", "public"] // Files to include for analysis
+  }
+  

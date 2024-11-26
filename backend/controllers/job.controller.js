@@ -1,4 +1,4 @@
-import { Job } from "../models/job.model";
+import { Job } from "../models/job.model.js";
 
 export const postJob = async (req, res) => {
     try {
@@ -10,7 +10,7 @@ export const postJob = async (req, res) => {
             return res.status(401).json({message: "Unauthorized", success: false});
         }
 
-        if (!title || !description || !company || !location || !employmentType || !requirements || !postedBy ) {
+        if (!title || !description || !company || !location || !employmentType || !requirements  ) {
             return res.status(400).json({message: "Please fill in all the required fields", success: false});
         }
 
@@ -20,7 +20,7 @@ export const postJob = async (req, res) => {
             company,
             location,
             employmentType,
-            requirements : requirements.split(",").map(req => req.trim()),
+            requirements,
             postedBy: userId,
         }
 
@@ -39,7 +39,7 @@ export const postJob = async (req, res) => {
 //For students
 export const getAllJobs = async (req, res) => {
     try {
-        const Keyword = request.query.Keyword || ""
+        const Keyword = req.query.Keyword || ""
         const query = {
             $or : [
                 {title : {$regex : Keyword, $options : "i"}},
@@ -47,7 +47,7 @@ export const getAllJobs = async (req, res) => {
             ]
         };
 
-        const job = await Job.find(query).populate("company", "name").populate("postedBy", "name email");
+        const job = await Job.find(query).populate({ path: "company",  select : "name" }).sort({ createdAt: -1 });
         if (!job) {
             return res.status(404).json({message: "No job found", success: false});
         }

@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-const mongoose = require('mongoose');
 
 const JobSchema = new mongoose.Schema({
     title: {

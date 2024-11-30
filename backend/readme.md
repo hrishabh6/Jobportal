@@ -4,4 +4,5 @@
 <li>try to integrate google auth alongside the own auth</li>
 <li>Make a filter for salary range (slider)</li>
 <li>Make a tags schema and include it in the Job Schema</li>
+<li>Use combobox from shadcn ui</li>
 

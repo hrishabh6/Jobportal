@@ -1,10 +1,13 @@
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/pagination";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ... */
 
-body{
+body {
   @apply bg-light-900 dark:bg-dark-100 text-light-900 dark:text-light-900;
 }
 
@@ -198,7 +201,7 @@ body{
   }
 
   .primary-gradient {
-    background: linear-gradient(129deg, #9290C3 0%, #535C91  100%);
+    background: linear-gradient(129deg, #9290c3 0%, #535c91 100%);
   }
 
   .btn {
@@ -216,7 +219,28 @@ body{
   .no-focus {
     @apply focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0 !important;
   }
-  
+
+  .markdown a,
+  code {
+    /* These are technically the same, but use both */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+
+    -ms-word-break: break-all;
+    /* This is the dangerous one in WebKit, as it breaks things wherever */
+    word-break: break-all;
+    /* Instead use this non-standard one: */
+    word-break: break-word;
+
+    /* Adds a hyphen where the word breaks, if supported (No Blink) */
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+
+    padding: 2px;
+    color: #ff7000 !important;
+  }
 
   .dark-gradient {
     background: linear-gradient(
@@ -227,18 +251,13 @@ body{
   }
 }
 
-
 .active-theme {
   filter: invert(53%) sepia(98%) saturate(3332%) hue-rotate(0deg)
     brightness(104%) contrast(106%) !important;
 }
 
-
-
-
 @layer base {
   :root {
-
     --background: 0 0% 100%;
 
     --foreground: 222.2 84% 4.9%;
@@ -287,10 +306,9 @@ body{
 
     --chart-5: 27 87% 67%;
 
-    --radius: 0.5rem
+    --radius: 0.5rem;
   }
   .dark {
-
     --background: 222.2 84% 4.9%;
 
     --foreground: 210 40% 98%;
@@ -337,7 +355,7 @@ body{
 
     --chart-4: 280 65% 60%;
 
-    --chart-5: 340 75% 55%
+    --chart-5: 340 75% 55%;
   }
 }
 

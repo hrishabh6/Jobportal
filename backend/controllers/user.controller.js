@@ -5,31 +5,44 @@ import { normalizeEmail } from "../utils/constant.js";
 
 export const register = async (req, res) => {
     try {
-        const {fullName, email, phoneNumber, password, role} = req.body;
-        if (!fullName || !email || !phoneNumber || !password || !role) {
-            return res.status(400).json({message: "Something is missing", success: false});
+        const { fullName, email, phoneNumber, password, role, username } = req.body;
+        const profile = req.file
+
+        
+        // Check if any required field is missing
+        if (!fullName || !email || !phoneNumber || !password || !role || !username) {
+            return res.status(400).json({ message: "Something is missing", success: false });
         }
 
-        const user = await User.findOne({email});
-        if (user) {
-            return res.status(400).json({message: "User already exists with this email"});
+        // Check if the email already exists in the database
+        const userByEmail = await User.findOne({ email });
+        if (userByEmail) {
+            return res.status(400).json({ message: "User already exists with this email", success: false });
         }
 
+        // Check if the username already exists in the database
+        const userByUsername = await User.findOne({ username });
+        if (userByUsername) {
+            return res.status(400).json({ message: "Username is already taken", success: false });
+        }
+
+        // Normalize the email (if needed)
         const normalizedEmail = normalizeEmail(email);
 
+        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        //TODO : Create a system of OTP verification for email and Phone number
-
+        // Create the new user
         await User.create({
             name: fullName,
             email: normalizedEmail,
             phoneNumber,
             password: hashedPassword,
             role,
+            username, // Storing the username
         });
 
-        return res.status(201).json({message: "Account registered successfully", success: true});
+        return res.status(201).json({ message: "Account registered successfully", success: true });
 
     } catch (error) {
         console.log(error);
@@ -38,7 +51,8 @@ export const register = async (req, res) => {
             success: false,
         });
     }
-}
+};
+
 
 export const login = async (req, res) => {
     try {
@@ -103,7 +117,7 @@ export const logout = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
     try {
-        const {fullName, email, phoneNumber, bio, skills} = req.body;
+        const {fullName, email, phoneNumber, bio, skills, username} = req.body;
 
         const file = req.file;
 
@@ -120,6 +134,7 @@ export const updateProfile = async (req, res) => {
                 ? skills
                 : skills.split(',').map(skill => skill.trim());
         }
+        if(username) updateFields.username = username
 
         const user = await User.findOneAndUpdate(
             { _id: userId }, // Filter

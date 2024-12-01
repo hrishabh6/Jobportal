@@ -15,16 +15,16 @@ import {
 } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from '@heroicons/react/20/solid'
-
-import PopularJobs from '../PopularJobs'
+import { dummyJobs } from '@/lib'
+import JobCard from './JobCard'
 
 const sortOptions = [
     { name: 'Newest', href: '#', current: false },
     { name: 'Highest Salary', href: '#', current: false },
     { name: 'Lowest Salary', href: '#', current: false },
     { name: 'Most Applications', href: '#', current: false },
-  ];
-  
+];
+
 
 const filters = [
     {
@@ -88,7 +88,7 @@ export default function DemoSideBar() {
         title: [],
         salary: []
     });
-    
+
     const handleFilterChange = (filterType, value, isChecked) => {
         setSelectedFilters((prevFilters) => {
             const updatedFilters = { ...prevFilters };
@@ -101,18 +101,18 @@ export default function DemoSideBar() {
             return updatedFilters;
         });
     };
-    
+
     const fetchFilteredJobs = async (filters) => {
         //filter jobs based on selected filters
     };
-    
+
 
     useEffect(() => {
         fetchFilteredJobs(selectedFilters);
     }, [selectedFilters]);
-    
 
-    return (    
+
+    return (
         <div className="w-full">
             <div>
                 {/* Mobile filter dialog */}
@@ -233,7 +233,7 @@ export default function DemoSideBar() {
                                                 <a
                                                     href={option.href}
                                                     className={classNames(
-                                                        
+
                                                         'block px-4 py-2 text-sm data-[focus]:background-light800_dark400  data-[focus]:outline-none',
                                                     )}
                                                 >
@@ -268,7 +268,7 @@ export default function DemoSideBar() {
                         <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-[20%_80%]">
                             {/* Filters */}
                             <form className="hidden lg:block ">
-                               
+
 
                                 {filters.map((section) => (
                                     <Disclosure key={section.id} as="div" className="border-b border-gray-200 py-6">
@@ -331,7 +331,21 @@ export default function DemoSideBar() {
 
                             {/* Product grid */}
                             <div >
-                                <PopularJobs />
+                                <div className=" md:grid md:grid-cols-2 md:grid-rows-3 xl:grid-cols-3 xl:grid-rows-2 gap-4">
+                                    {dummyJobs.map((job, index) => (
+                                        <JobCard
+                                            key={index}  
+                                            title={job.title}
+                                            description={job.description}
+                                            company={job.company}
+                                            location={job.location}
+                                            employmentType={job.employmentType}
+                                            salary={job.salary}
+                                            experience={job.experience}
+                                            positions={job.positions}
+                                        />
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </section>

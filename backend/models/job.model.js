@@ -39,6 +39,11 @@ const JobSchema = new mongoose.Schema({
         required: false,
     },
 
+    positions: {
+        type: Number, // e.g., 5
+        required: false,
+    },
+
     postedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User', // Reference to the User schema (admin who posted the job)

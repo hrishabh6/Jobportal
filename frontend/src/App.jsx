@@ -4,6 +4,7 @@ import Login from "./components/shared/Login"
 import SignUp from "./components/shared/SignUp"
 import Home from "./components/shared/Home"
 import Jobs from "./components/shared/Jobs"
+import Browse from "./components/shared/Browse"
 
 
 const appRouter = createBrowserRouter([
@@ -24,8 +25,8 @@ const appRouter = createBrowserRouter([
     element: <Jobs />
   },
   {
-    path: "/",
-    element: <Home />
+    path: "/explore",
+    element: <Browse />
   },
   {
     path: "/",

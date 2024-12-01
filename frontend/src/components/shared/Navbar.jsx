@@ -8,9 +8,11 @@ import { Button } from "../ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
   const { mode } = useTheme(); // Get the current theme mode
+  const { user } = useSelector(store => store.auth);
   const navigateTo = useNavigate();
   const handleLogout = async () => {
     try {
@@ -34,10 +36,9 @@ const Navbar = () => {
       ? "/assets/images/logo-dark.png"
       : "/assets/images/logo-light.png";
 
-  const user = false; // This is a placeholder for the user state
 
   return (
-    <nav className="p-4 w-full max-w-full background-light900_dark200 shadow-sm">
+    <nav className="p-4 w-full max-w-full background-light900_dark200 shadow-sm z-50">
       <div className="flex items-center justify-between w-full max-w-7xl mx-auto overflow-hidden">
         {/* Logo Section */}
         <div className="flex items-center gap-2">
@@ -80,10 +81,10 @@ const Navbar = () => {
                   </p>
                 </div>
                 <div className="flex mt-4 gap-3">
-                  <Button className="primary-gradient max-h-[26px] px-2 py-1 !text-light-900">
-                    View Profile
+                  <Button className="small-medium btn-secondary text-dark400_light900 min-h-[41px]  rounded-lg px-4 py-3 shadow-none">
+                    <Link to={`/profile`}>View Profile</Link>
                   </Button>
-                  <Button className="primary-gradient max-h-[26px] px-2 py-1 !text-light-900">
+                  <Button onclick={handleLogout} className="small-medium btn-secondary text-dark400_light900 min-h-[41px]  rounded-lg px-4 py-3 shadow-none">
                     Log Out
                   </Button>
                 </div>
@@ -104,15 +105,7 @@ const Navbar = () => {
             </div>
           )}
 
-          {/* Logout Button */}
-          <Button
-            onClick={handleLogout}
-            className="hidden xl:inline-block primary-gradient max-h-[36px] px-2 py-1 !text-light-900"
-          >
-            Log Out
-          </Button>
-
-          {/* Mobile Navigation */}
+          
           <MobileNav />
         </div>
       </div>

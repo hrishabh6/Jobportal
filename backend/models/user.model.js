@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema({
     role: { type: String, enum: ['student', 'recruiter'], required: true,  },
     profile: {
         bio: { type: String, default: "" },
+        portfolioWebsite: { type: String, default: "" },
+        address: { type: String, default: "" },
         skills: [{type: String, default: []}],
         resume: { type: String },
         resumeOriginalName: { type: String },

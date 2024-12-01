@@ -6,7 +6,7 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
-import { setLoading } from "@/redux/authSlice";
+import { setLoading, setUser } from "@/redux/authSlice";
 import { Button } from "../ui/button";
 import {  Loader2 } from "lucide-react";
 
@@ -37,6 +37,7 @@ const SignUp = () => {
       });
       console.log("Response:", res.data);
       if (res.data.success) {
+        dispatch(setUser(res.data.user));
         navigateTo("/");
         toast.success(res.data.message);
       }

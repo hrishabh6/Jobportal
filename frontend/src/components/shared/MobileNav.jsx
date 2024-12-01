@@ -6,10 +6,13 @@ import {
 } from "@/components/ui/sheet"
 import { useTheme } from "@/lib/useTheme";
 import { Button } from "../ui/button";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+
 
 const MobileNav = () => {
     const { mode } = useTheme(); // Get the current theme mode
-
+    
     // Determine the logo based on the theme
     const logoSrc = mode === "dark"
         ? "/assets/images/logo-dark.png"
@@ -17,8 +20,8 @@ const MobileNav = () => {
             ? "/assets/images/logo-dark.png"
             : "/assets/images/logo-light.png";
 
-    const user = false; // This is a placeholder for the user state
-
+    
+    const { user } = useSelector(store => store.auth);
     return (
         <Sheet >
             <SheetTrigger asChild>
@@ -37,24 +40,24 @@ const MobileNav = () => {
                     <SheetClose asChild>
                         <div className="flex gap-4 cursor-pointer h-8">
                             <img src="/assets/icons/home.svg" alt="" height={20} width={20} className="dark:invert" />
-                            <p className="font-semibold text-xl ">Home</p>
+                            <Link to={`/`} className="font-semibold text-xl ">Home</Link>
                         </div>
                     </SheetClose>
                     <SheetClose asChild>
                         <div className="flex gap-4 cursor-pointer h-8">
                             <img src="/assets/icons/briefcase-icon.svg" alt="" height={20} width={20} className="dark:invert" />
-                            <p className="font-semibold text-xl ">Jobs</p>
+                            <Link to={`/jobs`} className="font-semibold text-xl ">Jobs</Link>
                         </div>
                     </SheetClose>
                     <SheetClose asChild>
                         <div className="flex gap-4 cursor-pointer h-8">
                             <img src="/assets/icons/home.svg" alt="" height={20} width={20} className="dark:invert" />
-                            <p className="font-semibold text-xl ">Explore</p>
+                            <Link to={`/explore`} className="font-semibold text-xl ">Explore</Link>
                         </div>
                     </SheetClose>
 
                     {
-                        !user && (
+                        !user  && (
                             <SheetClose asChild>
                                 <div className="flex gap-5 flex-col mt-10 w-3/4">
                                     <Button className="small-medium btn-tertiary text-dark400_light900 min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
@@ -65,7 +68,7 @@ const MobileNav = () => {
                                     </Button>
                                 </div>
                             </SheetClose>
-                        )
+                        ) 
                     }
 
 

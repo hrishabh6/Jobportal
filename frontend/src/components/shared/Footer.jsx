@@ -3,7 +3,7 @@ const Footer = () => {
       <div>
         <div className="mt-5">
           <footer className="text-center text-lg text-white bg-dark-300">
-            <section className="flex justify-between p-4 bg-dark-400">
+            <section className="flex justify-between p-4 bg-dark-500">
               <div className="mr-5">
                 <span>Get connected with us on social networks:</span>
               </div>

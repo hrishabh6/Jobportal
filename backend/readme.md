@@ -5,4 +5,5 @@
 <li>Make a filter for salary range (slider)</li>
 <li>Make a tags schema and include it in the Job Schema</li>
 <li>Use combobox from shadcn ui</li>
+<li>Pagination</li>
 

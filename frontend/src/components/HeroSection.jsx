@@ -37,7 +37,7 @@ const HeroSection = () => {
                         />
                         <Input
                             type="text"
-                            placeholder="Search for jobs..."
+                            placeholder="Search for Jobs, locations, Companies..."
                             className=" no-focus paragraph-regular placeholder text-dark400_light700 border-none shadow-none outline-none bg-transparent"
                         />
                     </div>

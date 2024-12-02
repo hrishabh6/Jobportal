@@ -25,11 +25,13 @@ const UpdateProfile = () => {
     email: user?.email || "",
     phoneNumber: user?.phoneNumber || "",
     role: user?.role || "student",
+    location: user?.profile?.address || "",
     bio: user?.profile?.bio || "",
     skills: user?.profile?.skills.map(skill => skill) || "",
     portfolio: user?.profile?.portfolioWebsite || "",
     file: user?.profile?.file || "",
-    profile: null,
+    profile: user?.profile.resume || null,
+    resume: user?.profile?.resume || null,
   });
 
   const onSubmit = async (e) => {
@@ -42,8 +44,12 @@ const UpdateProfile = () => {
     formData.append("skills", input.skills);
     formData.append("portfolio", input.portfolio);
     formData.append("bio", input.bio);
+    formData.append("location", input.location);
     if (input.profile) {
       formData.append("profile", input.profile);
+    }
+    if (input.resume) {
+      formData.append("resume", input.resume);
     }
     console.log([...formData.entries()]); // Log FormData to verify it's correctly appended
 
@@ -80,11 +86,18 @@ const UpdateProfile = () => {
     }
   };
   
+  const handleResumeChange = (event) => {
+    const file = event.target.files?.[0]; // Get the selected file
+    if (file) {
+      setInput((prev) => ({ ...prev, resume: file })); // Store file in state
+    }
+  }
 
   return (
     <div className='background-light900_dark200 min-h-[100vh]'>
       <Navbar />
       <form
+        encType="multipart/form-data"
         onSubmit={onSubmit}
         className="mt-9 mx-auto flex flex-col  w-1/2 max-sm:w-3/4 background-light900_dark200  gap-6 text-dark400_light800 p-4 overflow-auto"
         autoComplete="off"
@@ -152,6 +165,17 @@ const UpdateProfile = () => {
           />
         </div>
         <div>
+          <Label>Your Location <span className="text-orange-500">*</span></Label>
+          <Input
+            value={input.location}
+            name="location"
+            type="text"
+            placeholder="eg.; Bangalore, India"
+            onChange={handleEventChange}
+            className="mt-2 w-3/4 max-sm:w-full no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700 ,min-h-[56px] border"
+          />
+        </div>
+        <div>
           <Label>Skills <span className="text-orange-500">*</span></Label>
           <Input
             value={input.skills}
@@ -192,6 +216,25 @@ const UpdateProfile = () => {
           {input.profile && (
             <p className="mt-2 text-sm text-gray-700">
               Selected File: {input.profile.name}
+            </p>
+          )}
+          <Label
+            htmlFor="resume-upload"
+            className="mt-5 w-1/2 min-h-[36px] max-sm:w-3/4 flex items-center justify-center px-4 py-2 rounded-lg cursor-pointer bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md hover:opacity-90 active:scale-95"
+          >
+            Update Resume
+          </Label>
+          <Input
+            id="resume-upload"
+            name="resume"
+            type="file"
+            accept="application/pdf"
+            className="hidden"
+            onChange={handleResumeChange}
+          />
+          {input.resume && (
+            <p className="mt-2 text-sm text-gray-700">
+              Selected File: {input.resume.name}
             </p>
           )}
         </div>

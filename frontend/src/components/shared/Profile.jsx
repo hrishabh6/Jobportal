@@ -6,7 +6,10 @@ import AppliedJob from "./AppliedJob";
 import { useState } from "react";
 import UpdateProfile from "./UpdateProfile";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { getTimestamp } from "@/lib";
 const Profile = () => {
+    const {user} = useSelector(store => store.auth)
     const [open, setOpen] = useState(false)
     return (
         <>
@@ -23,45 +26,52 @@ const Profile = () => {
                         />
                         <div className="mt-3">
                             <h2 className="h2-bold text-dark100_light900 ">
-                                Hrishabh Joshi
+                                {user?.name}
                             </h2>
                             <p className="paragraph-regular text-dark200_light800">
-                                @hrishabhjoshi
+                                @{user?.username}
                             </p>
                             <div className="mt-5 flex flex-wrap items-center justify-start gap-5">
 
                                 <ProfileLinks
                                     imgUrl="/assets/icons/link.svg"
-                                    href={"https://portfolio-hrishabh-joshis-projects.vercel.app/"}
+                                    href={user?.profile?.portfolioWebsite}
                                     title="Portfolio"
                                 />
+                                {
+                                   user?.profile?.resume && <ProfileLinks
+                                        imgUrl="/assets/icons/link.svg"
+                                        href={user?.profile?.resume}
+                                        title="Resume"
+                                    />
 
-                                <ProfileLinks
-                                    imgUrl="/assets/icons/link.svg"
-                                    href={"https://google.com"}
-                                    title="Resume"
-                                />
-
+                                }
 
                                 <ProfileLinks
                                     imgUrl="/assets/icons/location.svg"
-                                    title={"Delhi, India"}
+                                    title={user?.profile?.address}
                                 />
 
                                 <ProfileLinks
                                     imgUrl="/assets/icons/calendar.svg"
-                                    title={`Joined December 2024`}
+                                    title={`Joined ${getTimestamp(user?.createdAt)}`}
                                 />
 
                             </div>
 
                             <>
-                                <p className="paragraph-regular text-dark400_light800 mt-8">
-                                    MERN Stack Developer
+                            {
+                                user?.profile?.bio && <p className="paragraph-regular text-dark400_light800 mt-8">
+                                    {user?.profile?.bio}
                                 </p>
-                                <p className="paragraph-regular text-dark400_light800 mt-2">
-                                    Skills : React, Node, Express, MongoDB
+                            }
+                            
+                            {
+                                user?.profile?.skills && <p className="paragraph-regular text-dark400_light800 mt-2">
+                                    Skills : {user?.profile?.skills.join(", ")}
                                 </p>
+                            }
+                                
                             </>
 
                         </div>

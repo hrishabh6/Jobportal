@@ -6,6 +6,8 @@ import Home from "./components/shared/Home"
 import Jobs from "./components/shared/Jobs"
 import Browse from "./components/shared/Browse"
 import Profile from "./components/shared/Profile"
+import JobDescription from "./components/shared/JobDescription"
+import UpdateProfile from "./components/shared/UpdateProfile"
 
 
 const appRouter = createBrowserRouter([
@@ -32,6 +34,14 @@ const appRouter = createBrowserRouter([
   {
     path: "/profile",
     element: <Profile />
+  },
+  {
+    path: "/profile/edit",
+    element: <UpdateProfile />
+  },
+  {
+    path: "/description/:id",
+    element: <JobDescription />
   }
 ])
 

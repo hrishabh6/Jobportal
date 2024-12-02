@@ -81,8 +81,9 @@ export const login = async (req, res) => {
         }
 
         user = {
+            fullName : user.name,
+            username : user.username,
             _id : user._id,
-            fullname : user.fullName,
             email : user.email,
             phoneNumber : user.phoneNumber,
             role: user.role,
@@ -117,10 +118,10 @@ export const logout = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
     try {
-        const {fullName, email, phoneNumber, bio, skills, username} = req.body;
+        const {fullName, email, phoneNumber, bio, skills, username, portfolio} = req.body;
 
         const file = req.file;
-
+        console.log(fullName, email, phoneNumber, bio, skills, username, portfolio)
         //TODO : cloudinary setup
         const userId = req.id; //Middleware auth
         const updateFields = {};
@@ -135,7 +136,7 @@ export const updateProfile = async (req, res) => {
                 : skills.split(',').map(skill => skill.trim());
         }
         if(username) updateFields.username = username
-
+        if(portfolio) updateFields['profile.portfolioWebsite'] = portfolio;
         const user = await User.findOneAndUpdate(
             { _id: userId }, // Filter
             { $set: updateFields }, // Update

@@ -1,12 +1,13 @@
-
 import Navbar from "./Navbar"
 import ProfileLinks from "./ProfileLinks"
-import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AppliedJob from "./AppliedJob";
+import { useState } from "react";
+import UpdateProfile from "./UpdateProfile";
+import { Link } from "react-router-dom";
 const Profile = () => {
-
+    const [open, setOpen] = useState(false)
     return (
         <>
             <Navbar />
@@ -66,15 +67,12 @@ const Profile = () => {
                         </div>
                     </div>
                     <div className="flex justify-end max-sm:mb-5 max-sm:w-full sm:mt-3">
-
-
-                        <Link to={`/profile`}>
-                            <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-[46px] min-w-[175px] px-4 py-3">
+                        <Link to="/profile/edit">
+                            <Button onClick={() => setOpen(true)} className="paragraph-medium btn-secondary text-dark300_light900 min-h-[46px] min-w-[175px] px-4 py-3">
                                 Edit Profile
                             </Button>
-                        </Link>
-
-
+                        
+                        </Link>                   
                     </div>
                 </div>
 
@@ -102,9 +100,9 @@ const Profile = () => {
                 </div>
             </div>
 
-
+            <UpdateProfile open={open} setOpen={setOpen} />
         </>
-
+        
     )
 }
 

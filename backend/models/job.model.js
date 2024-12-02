@@ -30,7 +30,7 @@ const JobSchema = new mongoose.Schema({
     },
     
     requirements: [{
-        type: String,
+        type: String, 
         required: true, 
     }],
 

@@ -2,15 +2,18 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import Navbar from "./Navbar";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import {  useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setUser } from "@/redux/authSlice";
 import { Button } from "../ui/button";
 import {  Loader2 } from "lucide-react";
+import useGetAllAppliedJobs from "@/hooks/getAllAppliedJobs";
 
-const SignUp = () => {
+const Login = () => {
+  const { fetchJobs } = useGetAllAppliedJobs(); // Get fetchJobs function from hook
+  
   const [input, setInput] = useState({
     email: "",
     password: "",
@@ -38,16 +41,20 @@ const SignUp = () => {
       console.log("Response:", res.data);
       if (res.data.success) {
         dispatch(setUser(res.data.user));
+        await fetchJobs(); // Fetch applied jobs after successful login
         navigateTo("/");
         toast.success(res.data.message);
       }
     } catch (error) {
       console.error("Error during API call:", error);
-      toast.error(error.message);
+      toast.error(error.response.data.message);
     } finally {
       dispatch(setLoading(false));
     }
   };
+
+  
+
 
   return (
     <>
@@ -139,4 +146,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Login;

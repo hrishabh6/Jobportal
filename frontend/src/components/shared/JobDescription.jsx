@@ -6,54 +6,86 @@ import RenderBadge from "./RenderBadge"
 import { useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { getTimestamp } from "@/lib"
+import {  useSelector } from "react-redux"
+import { toast } from "sonner"
+import useGetAllAppliedJobs from "@/hooks/getAllAppliedJobs"
 const JobDescription = () => {
     const isSaved = false
-    const isApplied = true
-    const { id } = useParams()
-    const [job, setJob] = useState({})
+    const { allJobs } = useSelector(store => store.jobs);
+    const { user } = useSelector(store => store.auth);
+    const { id } = useParams();
+    const [job, setJob] = useState({});
+    const [isApplied, setIsApplied] = useState(false); // State to store if the job is applied or not
+    const { fetchJobs } = useGetAllAppliedJobs(); // Get fetchJobs function from hook
     const findJobById = async (id) => {
         try {
-            const res = await axios.get(`${import.meta.env.VITE_JOB_API_END_POINT}/get/${id}`)
-            if(res.data.success) {
-                console.log(res.data.job)
-                setJob(res.data.job)
-                
+            const res = await axios.get(`${import.meta.env.VITE_JOB_API_END_POINT}/get/${id}`);
+            if (res.data.success) {
+                setJob(res.data.job);
+
+                // Check if user is logged in
+                if (user && user._id) {
+                    // If logged in, check if the job is in the applied jobs list
+                    const isJobApplied = res.data.job.applications.some(applicationId =>
+                        allJobs.some(appliedJob => appliedJob._id === applicationId && appliedJob.applicant === user._id)
+                    );
+                    setIsApplied(isJobApplied); // Update the isApplied state accordingly
+                } else {
+                    // If the user is not logged in, set isApplied to false
+                    setIsApplied(false);
+                }
             }
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
-    }
-
+    };
+    
     useEffect(() => {
         if (id) {
             findJobById(id);
-            
         }
-    }, [id]);
+    }, [id, allJobs]); // Ensure the effect runs when the job id, allJobs, or user._id changes
+
+    const handleApply = async () => {
+        try {
+            const res = await axios.get(`${import.meta.env.VITE_APPLICATION_API_END_POINT}/apply/${id}`, {
+                withCredentials: true,
+            })  
+            if(res.data.success){
+                setIsApplied(true)
+                await fetchJobs(); // Fetch applied jobs after successful login
+                toast.success(res.data.message)
+            }
+        } catch (error) {
+            console.error(error)
+            toast.error(error.response.data.message)
+        }
+    }
+
 
 
     return (
         <div className="background-light900_dark100 min-h-[100vh]">
             <Navbar />
-            <div className="flex flex-col mt-9 lg:p-10 p-5  w-full lg:w-fit lg:max-w-[50vw] lg:mx-auto shadow-light-300">
-                    <p className="body-medium text-dark400_light700">{` • posted ${getTimestamp(job.updatedAt)}`}</p>
+            <div className="flex flex-col mt-9 lg:p-10 p-5  w-full  lg:w-[50vw] lg:mx-auto shadow-light-300">
+                <p className="body-medium text-dark400_light700">{` • posted ${getTimestamp(job.createdAt)}`}</p>
                 <div className="flex gap-4 justify-end  mb-5 md:hidden items-center">
-                   
+
                     {
-                        isApplied ? <Button disabled>Applied Already</Button> : <Button>Apply Now</Button>
+                        isApplied ? <Button disabled>Applied Already</Button> : <Button onClick={handleApply}>Apply Now</Button>
                     }
                     {
                         isSaved ? <img src="/assets/icons/bookmarked.svg" alt="saved" /> : <img src="/assets/icons/bookmark.svg" className="dark:invert invert-0" alt="save" />
                     }
 
-                    
+
                 </div>
                 <div className="flex justify-between items-center">
                     <h1 className="h1-bold text-dark100_light900">{job.title}</h1>
 
-                    <div className="flex gap-4 max-sm:hidden">
+                    <div className="flex gap-4 max-md:hidden">
                         {
-                            isApplied ? <Button disabled>Applied Already</Button> : <Button>Apply Now</Button>
+                            isApplied ? <Button disabled>Applied Already</Button> : <Button onClick={handleApply}>Apply Now</Button>
                         }
                         {
                             isSaved ? <img src="/assets/icons/bookmarked.svg" alt="saved" /> : <img src="/assets/icons/bookmark.svg" className="dark:invert invert-0" alt="save" />
@@ -101,13 +133,13 @@ const JobDescription = () => {
                         <h2 className="h2-semibold text-dark200_light900">Job Requirements</h2>
                         <p className="text-dark200_light900 paragraph-medium">
                             <ul className="list-disc list-inside ml-3 flex flex-col gap-2">
-                                { job.requirements &&
+                                {job.requirements &&
                                     job.requirements.map((requirement, index) => (
                                         <li key={index}>{requirement}</li>
                                     ))
                                 }
                             </ul>
-                            
+
                         </p>
 
                     </div>

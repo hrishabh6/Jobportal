@@ -42,7 +42,7 @@ const JobCard = ({jobId, title, description, company, location, employmentType, 
 }
 
 JobCard.propTypes = {
-    jobId: PropTypes.string.isRequired, // Job ID
+    jobId: PropTypes.string, // Job ID
     title: PropTypes.string.isRequired, // Job title (e.g., "Frontend Developer")
     description: PropTypes.string.isRequired, // Detailed description of the job role
     company: PropTypes.string.isRequired, // Company name or company ID (string)

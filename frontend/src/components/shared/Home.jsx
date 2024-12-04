@@ -6,18 +6,26 @@ import Footer from "./Footer";
 import JobCard from "./JobCard";
 import JobCardSlider from "./JobCardSlider";
 import Navbar from "./Navbar";
+import useGetAllAppliedJobs from "@/hooks/getAllAppliedJobs";
+import { useSelector } from "react-redux";
+
 const Home = () => {
   const [allJobs, setAllJobs] = useState([]); // Default state as an empty array
   const [loading, setLoading] = useState(true);
 
+  const { fetchJobs } = useGetAllAppliedJobs(); // Get fetchJobs method
+  const { user } = useSelector(store => store.auth)
+
+  // Fetch all jobs
   const fetchAllJobs = async (limit = 6) => {
+
     try {
       const res = await axios.get(
         `${import.meta.env.VITE_JOB_API_END_POINT}/get`,
         { params: { limit } } // Pass limit as query parameter
       );
       if (res.data.success) {
-        console.log(res.data.jobs);
+        
         setAllJobs(res.data.jobs || []); // Ensure it's always an array
       }
     } catch (error) {
@@ -27,9 +35,17 @@ const Home = () => {
     }
   };
 
+  // Fetch all jobs on mount
   useEffect(() => {
-    fetchAllJobs(); // Fetch jobs on component mount
+    fetchAllJobs();
   }, []);
+
+  useEffect(() => {
+    if (user) { // Only fetch applied jobs if the user is logged in
+      fetchJobs(); // Fetch applied jobs when the component mounts
+    }
+  }, [fetchJobs, user]);
+
 
   return (
     <div className="background-light900_dark300">
@@ -67,7 +83,7 @@ const Home = () => {
           <JobCardSlider>
             {allJobs.map((job, index) => (
               <JobCard
-              logo={job.company.logo}
+                logo={job.company.logo}
                 key={index}
                 title={job.title}
                 description={job.description}

@@ -8,17 +8,23 @@ import { Button } from "../ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "@/redux/authSlice";
 
 const Navbar = () => {
   const { mode } = useTheme(); // Get the current theme mode
   const { user } = useSelector(store => store.auth);
   const navigateTo = useNavigate();
+  const dispatch = useDispatch();
   const handleLogout = async () => {
+
     try {
+      console.log("setUser from dispatch: ", dispatch(setUser));
       const res = await axios.get(`${import.meta.env.VITE_USER_API_END_POINT}/logout`)
       console.log("Logged out successfully");
       if (res.data.success) {
+        console.log("Logged out successfully");
+        dispatch(setUser(null));
         navigateTo("/");
         toast.success(res.data.message);
       }
@@ -101,7 +107,7 @@ const Navbar = () => {
                   <Button className="small-medium btn-secondary text-dark400_light900 min-h-[41px]  rounded-lg px-4 py-3 shadow-none">
                     <Link to={`/profile`}>View Profile</Link>
                   </Button>
-                  <Button onclick={handleLogout} className="small-medium btn-secondary text-dark400_light900 min-h-[41px]  rounded-lg px-4 py-3 shadow-none">
+                  <Button onClick={handleLogout} className="small-medium btn-secondary text-dark400_light900 min-h-[41px]  rounded-lg px-4 py-3 shadow-none">
                     Log Out
                   </Button>
                 </div>

@@ -30,13 +30,13 @@ const UpdateProfile = () => {
     skills: user?.profile?.skills.map(skill => skill) || "",
     portfolio: user?.profile?.portfolioWebsite || "",
     file: user?.profile?.file || "",
-    profile: user?.profile.resume || null,
-    resume: user?.profile?.resume || null,
+    profile: null,
+    resume:  null,
   });
 
   const onSubmit = async (e) => {
-      e.preventDefault()
-      const formData = new FormData();
+    e.preventDefault()
+    const formData = new FormData();
     formData.append("fullName", input.fullName);
     formData.append("username", input.username);
     formData.append("email", input.email);
@@ -54,15 +54,15 @@ const UpdateProfile = () => {
     console.log([...formData.entries()]); // Log FormData to verify it's correctly appended
 
     try {
-      dispatch(setLoading(true)); 
+      dispatch(setLoading(true));
       const res = await axios.post(`${import.meta.env.VITE_USER_API_END_POINT}/profile/update`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
         withCredentials: true,
       });
-      console.log("Response:", res.data);   
-      if(res.data.success){
+      console.log("Response:", res.data);
+      if (res.data.success) {
         dispatch(setUser(res.data.user));
         navigateTo("/profile");
         toast.success(res.data.message);
@@ -70,14 +70,14 @@ const UpdateProfile = () => {
       console.log(input)
     } catch (error) {
       console.error("Error during API call:", error);
-      toast.error(error.message);
+      toast.error(error.response.data.message);
     } finally {
       dispatch(setLoading(false));
     }
   }
 
   const handleEventChange = (event) => {
-      setInput({ ...input, [event.target.name]: event.target.value }); 
+    setInput({ ...input, [event.target.name]: event.target.value });
   }
   const handleFileChange = (event) => {
     const file = event.target.files?.[0]; // Get the selected file
@@ -85,7 +85,7 @@ const UpdateProfile = () => {
       setInput((prev) => ({ ...prev, profile: file })); // Store file in state
     }
   };
-  
+
   const handleResumeChange = (event) => {
     const file = event.target.files?.[0]; // Get the selected file
     if (file) {
@@ -213,11 +213,12 @@ const UpdateProfile = () => {
             className="hidden"
             onChange={handleFileChange}
           />
-          {input.profile && (
-            <p className="mt-2 text-sm text-gray-700">
-              Selected File: {input.profile.name}
-            </p>
-          )}
+          {
+            input.profile && (
+              <p className="mt-2 text-sm text-gray-700">
+                Selected File: {input.profile.name}
+              </p>
+            )}
           <Label
             htmlFor="resume-upload"
             className="mt-5 w-1/2 min-h-[36px] max-sm:w-3/4 flex items-center justify-center px-4 py-2 rounded-lg cursor-pointer bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md hover:opacity-90 active:scale-95"

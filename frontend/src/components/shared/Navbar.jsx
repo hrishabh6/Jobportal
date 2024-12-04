@@ -67,15 +67,32 @@ const Navbar = () => {
           {user ? (
             <Popover className="flex gap-4">
               <PopoverTrigger className="text-dark200_light900">
-                <Avatar>
-                  <AvatarImage src="https://github.com/shadcn.png" className="cursor-pointer" />
-                </Avatar>
+                {
+                  user.profile.profilePhoto ? (
+                    <Avatar>
+                      <AvatarImage src={user.profile.profilePhoto} className="cursor-pointer" />
+                    </Avatar>
+                  ) : (
+                    <Avatar>
+                      <AvatarImage src="/assets/images/pfp.jpg" className="cursor-pointer" />
+                    </Avatar>
+                  )
+                }
+                
               </PopoverTrigger>
               <PopoverContent className="background-light900_dark300">
                 <div className="flex items-center gap-5">
-                  <Avatar>
-                    <AvatarImage src="https://github.com/shadcn.png" className="cursor-pointer" />
-                  </Avatar>
+                {
+                  user.profile.profilePhoto ? (
+                    <Avatar>
+                      <AvatarImage src={user.profile.profilePhoto} className="cursor-pointer" />
+                    </Avatar>
+                  ) : (
+                    <Avatar>
+                      <AvatarImage src="/assets/images/pfp.jpg" className="cursor-pointer" />
+                    </Avatar>
+                  )
+                }
                   <p className="paragraph-medium text-dark200_light700">
                     Hrishabh Joshi
                   </p>

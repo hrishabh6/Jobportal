@@ -8,5 +8,6 @@ router.route('/register').post(singleUpload, register)
 router.route('/login').post(login)
 router.route('/logout').get(logout)
 router.route('/profile/update').post(isAuthenticated, multipleUpload, updateProfile)
+router.route('/profile/:id').post(isAuthenticated, updateProfile)
 
 export default router;

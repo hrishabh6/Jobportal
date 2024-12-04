@@ -1,29 +1,60 @@
+import axios from "axios"
 import { Button } from "../ui/button"
 import Navbar from "./Navbar"
 import ProfileLinks from "./ProfileLinks"
 import RenderBadge from "./RenderBadge"
+import { useParams } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { getTimestamp } from "@/lib"
 const JobDescription = () => {
     const isSaved = false
     const isApplied = true
+    const { id } = useParams()
+    const [job, setJob] = useState({})
+    const findJobById = async (id) => {
+        try {
+            const res = await axios.get(`${import.meta.env.VITE_JOB_API_END_POINT}/get/${id}`)
+            if(res.data.success) {
+                console.log(res.data.job)
+                setJob(res.data.job)
+                
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    useEffect(() => {
+        if (id) {
+            findJobById(id);
+            
+        }
+    }, [id]);
+
+
     return (
         <div className="background-light900_dark100 min-h-[100vh]">
             <Navbar />
             <div className="flex flex-col mt-9 lg:p-10 p-5  w-full lg:w-fit lg:max-w-[50vw] lg:mx-auto shadow-light-300">
-                <div className="flex gap-4 justify-end mb-5 md:hidden">
+                    <p className="body-medium text-dark400_light700">{` • posted ${getTimestamp(job.updatedAt)}`}</p>
+                <div className="flex gap-4 justify-end  mb-5 md:hidden items-center">
+                   
                     {
                         isApplied ? <Button disabled>Applied Already</Button> : <Button>Apply Now</Button>
                     }
                     {
                         isSaved ? <img src="/assets/icons/bookmarked.svg" alt="saved" /> : <img src="/assets/icons/bookmark.svg" className="dark:invert invert-0" alt="save" />
                     }
+
+                    
                 </div>
                 <div className="flex justify-between items-center">
-                    <h1 className="h1-bold text-dark100_light900">Frontend Developer</h1>
+                    <h1 className="h1-bold text-dark100_light900">{job.title}</h1>
 
                     <div className="flex gap-4 max-sm:hidden">
-                    {
-                        isApplied ? <Button disabled>Applied Already</Button> : <Button>Apply Now</Button>
-                    }
+                        {
+                            isApplied ? <Button disabled>Applied Already</Button> : <Button>Apply Now</Button>
+                        }
                         {
                             isSaved ? <img src="/assets/icons/bookmarked.svg" alt="saved" /> : <img src="/assets/icons/bookmark.svg" className="dark:invert invert-0" alt="save" />
                         }
@@ -32,13 +63,15 @@ const JobDescription = () => {
                 </div>
                 <div className="mt-5 flex flex-wrap items-start justify-start w-full gap-5">
                     <div className="grid grid-cols-[20%_80%] min-w-[50%]">
-                        <img src="/assets/images/logo-dark.png" height={70} width={70} />
+                        {
+                            job.company ? <img src={job.company.logo} alt={job.company.name} className="h-20 w-20 rounded-lg" /> : <img src="/assets/images/logo-dark.png" height={70} width={70} />
+                        }
                         <div className="flex flex-col gap-5 items-start max-sm:ml-3">
                             <div className="flex gap-5">
                                 <ProfileLinks
                                     imgUrl="/assets/icons/link.svg"
-                                    href={"https://portfolio-hrishabh-joshis-projects.vercel.app/"}
-                                    title="Netflix"
+                                    href={job.company && job.company.website}
+                                    title={job.company && job.company.name}
                                 />
 
                                 <ProfileLinks
@@ -47,10 +80,10 @@ const JobDescription = () => {
                                 />
                             </div>
                             <div className="flex gap-5 flex-wrap">
-                                <RenderBadge name="Full-time" />
-                                <RenderBadge name="Remote" />
-                                <RenderBadge name="2-4 years" />
-                                <RenderBadge name="$70k - $90k" />
+                                <RenderBadge name={job.employmentType} />
+                                <RenderBadge name={job.location} />
+                                <RenderBadge name={job.experience} />
+                                <RenderBadge name={job.salary} />
                             </div>
                         </div>
 
@@ -60,24 +93,21 @@ const JobDescription = () => {
                 <div className="flex mt-9 flex-col gap-8">
                     <div className="flex gap-3 flex-col">
                         <h2 className="h2-semibold text-dark200_light900">About this role</h2>
-                        <p className="text-dark200_light900 paragraph-medium">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Deleniti explicabo quod vel iste cupiditate suscipit similique, quibusdam ducimus. In, iste repellat? Aspernatur delectus iure repellendus pariatur quam consequuntur quasi eligendi!
-                            Beatae aliquam non reiciendis magnam laborum veritatis reprehenderit quibusdam hic, saepe similique fugit mollitia provident corrupti. Eius exercitationem totam labore provident eos quia minima deleniti aliquam consequatur. Asperiores, incidunt repudiandae.
+                        <p className="text-dark200_light900 paragraph-medium">{job.description}
                         </p>
                     </div>
                     {/* Use a text editor to take job requirements and parse the html here */}
                     <div className="flex flex-col gap-3">
                         <h2 className="h2-semibold text-dark200_light900">Job Requirements</h2>
                         <p className="text-dark200_light900 paragraph-medium">
-                            Educational Qualifications:
-                            <ul className="list-disc list-inside ml-3">
-                                <li>Graduate</li>
-                                <li>Post Graduate</li>
+                            <ul className="list-disc list-inside ml-3 flex flex-col gap-2">
+                                { job.requirements &&
+                                    job.requirements.map((requirement, index) => (
+                                        <li key={index}>{requirement}</li>
+                                    ))
+                                }
                             </ul>
-                            Skills:
-                            <ul className="list-disc list-inside ml-3">
-                                <li>Skilled in react and nextjs</li>
-                                <li>Should have experience of collaborating projects</li>
-                            </ul>
+                            
                         </p>
 
                     </div>

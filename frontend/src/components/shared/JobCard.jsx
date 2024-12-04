@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom"
 import PropTypes from 'prop-types';
 
-const JobCard = ({ title, description, company, location, employmentType, salary, experience, positions }) => {
-    const jobId = "khjfksdfuiewkjsdf" //this will come from backend lateer
+const JobCard = ({jobId, title, description, company, location, employmentType, salary, experience, positions, logo }) => {
+    
     return (
 
         <div >
@@ -10,7 +10,7 @@ const JobCard = ({ title, description, company, location, employmentType, salary
                 <div className=" group mx-2  grid max-w-screen-md grid-cols-12 space-x-8 overflow-hidden rounded-lg border py-8 text-gray-700 shadow transition hover:shadow-lg sm:mx-auto">
                     <Link to={`/description/${jobId}`} className="text-dark400_light700 order-2 col-span-1 mt-4 -ml-14 text-left text-gray-600 hover:text-gray-700 sm:-order-1 sm:ml-4">
                         <div className="group relative md:h-12 md:w-12 h-16 w-16  overflow-hidden rounded-lg">
-                            <img src="/assets/images/logo-light.png" alt="" className="h-full w-full object-cover text-gray-700" />
+                            <img src={logo} alt={company} className="object-contain h-full w-full  text-gray-700" />
                         </div>
                     </Link>
 
@@ -42,14 +42,16 @@ const JobCard = ({ title, description, company, location, employmentType, salary
 }
 
 JobCard.propTypes = {
+    jobId: PropTypes.string.isRequired, // Job ID
     title: PropTypes.string.isRequired, // Job title (e.g., "Frontend Developer")
     description: PropTypes.string.isRequired, // Detailed description of the job role
     company: PropTypes.string.isRequired, // Company name or company ID (string)
     location: PropTypes.string.isRequired, // Location (e.g., "Remote", "New York")
     employmentType: PropTypes.string.isRequired, // Employment type (e.g., "Full-time", "Part-time")
-    salary: PropTypes.string, // Salary range (e.g., "$70k-$90k per year")
+        salary: PropTypes.string, // Salary range (e.g., "$70k-$90k per year")
     experience: PropTypes.string, // Experience required (e.g., "2+ years of experience")
     positions: PropTypes.number, // Number of positions available
+    logo: PropTypes.string, // Company logo URL
 };
 
 export default JobCard

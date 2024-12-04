@@ -3,14 +3,11 @@ import ProfileLinks from "./ProfileLinks"
 import { Button } from "../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AppliedJob from "./AppliedJob";
-import { useState } from "react";
-import UpdateProfile from "./UpdateProfile";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { getTimestamp } from "@/lib";
 const Profile = () => {
-    const {user} = useSelector(store => store.auth)
-    const [open, setOpen] = useState(false)
+    const { user } = useSelector(store => store.auth)
     return (
         <>
             <Navbar />
@@ -18,7 +15,7 @@ const Profile = () => {
                 <div className="lg:p-4 flex flex-col-reverse items-start justify-between sm:flex-row mx-auto max-sm:w-full lg:w-[50vw] lg:shadow-light-300">
                     <div className="flex flex-col items-start gap-4 lg:flex-row">
                         <img
-                            src="/assets/images/pfp.jpg"
+                            src={user?.profile?.profilePhoto || "/assets/images/default-profile.jpg"}
                             alt="profile"
                             width={140}
                             height={140}
@@ -26,20 +23,23 @@ const Profile = () => {
                         />
                         <div className="mt-3">
                             <h2 className="h2-bold text-dark100_light900 ">
-                                {user?.name}
+                                {user?.fullName}
                             </h2>
                             <p className="paragraph-regular text-dark200_light800">
                                 @{user?.username}
                             </p>
                             <div className="mt-5 flex flex-wrap items-center justify-start gap-5">
-
-                                <ProfileLinks
-                                    imgUrl="/assets/icons/link.svg"
-                                    href={user?.profile?.portfolioWebsite}
-                                    title="Portfolio"
-                                />
                                 {
-                                   user?.profile?.resume && <ProfileLinks
+                                  user?.profile?.portfolioWebsite &&
+                                      <ProfileLinks
+                                        imgUrl="/assets/icons/link.svg"
+                                        href={user?.profile?.portfolioWebsite}
+                                        title="Portfolio"
+                                    />
+                                }
+
+                                {
+                                    user?.profile?.resume && <ProfileLinks
                                         imgUrl="/assets/icons/link.svg"
                                         href={user?.profile?.resume}
                                         title="Resume"
@@ -51,38 +51,40 @@ const Profile = () => {
                                     imgUrl="/assets/icons/location.svg"
                                     title={user?.profile?.address}
                                 />
-
-                                <ProfileLinks
-                                    imgUrl="/assets/icons/calendar.svg"
-                                    title={`Joined ${getTimestamp(user?.createdAt)}`}
-                                />
+                                {
+                                    user?.createdAt &&
+                                    <ProfileLinks
+                                        imgUrl="/assets/icons/calendar.svg"
+                                        title={`Joined ${getTimestamp(user?.createdAt)}`}
+                                    />
+                                }
 
                             </div>
 
                             <>
-                            {
-                                user?.profile?.bio && <p className="paragraph-regular text-dark400_light800 mt-8">
-                                    {user?.profile?.bio}
-                                </p>
-                            }
-                            
-                            {
-                                user?.profile?.skills && <p className="paragraph-regular text-dark400_light800 mt-2">
-                                    Skills : {user?.profile?.skills.join(", ")}
-                                </p>
-                            }
-                                
+                                {
+                                    user?.profile?.bio && <p className="paragraph-regular text-dark400_light800 mt-8">
+                                        {user?.profile?.bio}
+                                    </p>
+                                }
+
+                                {
+                                    user?.profile?.skills && <p className="paragraph-regular text-dark400_light800 mt-2">
+                                        Skills : {user?.profile?.skills.join(", ")}
+                                    </p>
+                                }
+
                             </>
 
                         </div>
                     </div>
                     <div className="flex justify-end max-sm:mb-5 max-sm:w-full sm:mt-3">
                         <Link to="/profile/edit">
-                            <Button onClick={() => setOpen(true)} className="paragraph-medium btn-secondary text-dark300_light900 min-h-[46px] min-w-[175px] px-4 py-3">
+                            <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-[46px] min-w-[175px] px-4 py-3">
                                 Edit Profile
                             </Button>
-                        
-                        </Link>                   
+
+                        </Link>
                     </div>
                 </div>
 
@@ -110,9 +112,9 @@ const Profile = () => {
                 </div>
             </div>
 
-            <UpdateProfile open={open} setOpen={setOpen} />
+           
         </>
-        
+
     )
 }
 

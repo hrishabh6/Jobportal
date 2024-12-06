@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Category from "../Category";
-import HeroSection from "../HeroSection";
-import Footer from "./Footer";
-import JobCard from "./JobCard";
-import JobCardSlider from "./JobCardSlider";
-import Navbar from "./Navbar";
+
+import Footer from "../shared/Footer";
+import JobCard from "../shared/JobCard";
+import JobCardSlider from "../shared/JobCardSlider";
+import Navbar from "../shared/Navbar";
 import useGetAllAppliedJobs from "@/hooks/getAllAppliedJobs";
 import { useSelector } from "react-redux";
+import HeroSection from "../shared/HeroSection";
+import Category from "../shared/Category";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [allJobs, setAllJobs] = useState([]); // Default state as an empty array
@@ -15,7 +17,7 @@ const Home = () => {
 
   const { fetchJobs } = useGetAllAppliedJobs(); // Get fetchJobs method
   const { user } = useSelector(store => store.auth)
-
+  const navigate = useNavigate()
   // Fetch all jobs
   const fetchAllJobs = async (limit = 6) => {
 
@@ -35,7 +37,7 @@ const Home = () => {
     }
   };
 
-  // Fetch all jobs on mount
+  
   useEffect(() => {
     fetchAllJobs();
   }, []);
@@ -46,11 +48,16 @@ const Home = () => {
     }
   }, [fetchJobs, user]);
 
+  useEffect(() => {
+    if(user && user.role === "recruiter"){
+      navigate("/admin/companies")
+    }
+  }, [])
 
   return (
     <div className="background-light900_dark300">
       <Navbar />
-      <HeroSection />
+      <HeroSection/>
       <Category />
 
       <h2 className="h2-semibold text-dark200_light900 text-center mt-9">

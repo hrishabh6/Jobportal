@@ -6,21 +6,27 @@ import RenderBadge from "./RenderBadge"
 import { useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { getTimestamp } from "@/lib"
-import {  useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { toast } from "sonner"
 import useGetAllAppliedJobs from "@/hooks/getAllAppliedJobs"
+import { setLoading } from "@/redux/authSlice"
+import { Skeleton } from "../ui/skeleton"
 const JobDescription = () => {
     const isSaved = false
     const { allJobs } = useSelector(store => store.jobs);
     const { user } = useSelector(store => store.auth);
     const { id } = useParams();
+    const { loading } = useSelector(store => store.auth)
+    const dispatch = useDispatch();
     const [job, setJob] = useState({});
     const [isApplied, setIsApplied] = useState(false); // State to store if the job is applied or not
     const { fetchJobs } = useGetAllAppliedJobs(); // Get fetchJobs function from hook
     const findJobById = async (id) => {
         try {
+            dispatch(setLoading(true));
             const res = await axios.get(`${import.meta.env.VITE_JOB_API_END_POINT}/get/${id}`);
             if (res.data.success) {
+                console.log(res.data.job);
                 setJob(res.data.job);
 
                 // Check if user is logged in
@@ -37,9 +43,11 @@ const JobDescription = () => {
             }
         } catch (error) {
             console.error(error);
+        } finally{
+            dispatch(setLoading(false));
         }
     };
-    
+
     useEffect(() => {
         if (id) {
             findJobById(id);
@@ -50,8 +58,8 @@ const JobDescription = () => {
         try {
             const res = await axios.get(`${import.meta.env.VITE_APPLICATION_API_END_POINT}/apply/${id}`, {
                 withCredentials: true,
-            })  
-            if(res.data.success){
+            })
+            if (res.data.success) {
                 setIsApplied(true)
                 await fetchJobs(); // Fetch applied jobs after successful login
                 toast.success(res.data.message)
@@ -62,7 +70,38 @@ const JobDescription = () => {
         }
     }
 
+    if (loading) {
+        return (
+            <>
+                <div className="flex mt-9 lg:p-10 p-5 flex-col  w-full gap-5  lg:w-[50vw] lg:mx-auto shadow-light-300">
+                    <Skeleton className={`ml-3 h-12 w-[150px]`} />
+                    <div className="mt-5 flex flex-wrap items-start justify-start w-full gap-5">
+                        <div className="grid grid-cols-[30%_80%] min-w-[50%]">
+                            <Skeleton className={`h-[100px] w-[100px] rounded-full`} />
+                            <div className="flex flex-col gap-5 items-start max-sm:ml-3">
+                                <div className="flex gap-5">
+                                    <Skeleton className={`h-[20px] w-[50px]`} />
+                                    <Skeleton className={`h-[20px] w-[50px]`} />
+                                </div>
+                                <div className="flex gap-5 flex-wrap">
+                                    <Skeleton className={`h-[30px] w-[50px]`} />
+                                    <Skeleton className={`h-[30px] w-[50px]`} />
+                                    <Skeleton className={`h-[30px] w-[50px]`} />
+                                    <Skeleton className={`h-[30px] w-[50px]`} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex mt-9 flex-col gap-8">
+                        <Skeleton className={`h-[30px] w-[40%]`} />
+                        <Skeleton className={`h-[200px] w-[90%] `} />
+                    </div>
+                </div>
 
+            </>
+
+        )
+    }
 
     return (
         <div className="background-light900_dark100 min-h-[100vh]">
@@ -116,6 +155,7 @@ const JobDescription = () => {
                                 <RenderBadge name={job.location} />
                                 <RenderBadge name={job.experience} />
                                 <RenderBadge name={job.salary} />
+                                <RenderBadge name={`total applicants: ${job?.applications?.length}`} />
                             </div>
                         </div>
 

@@ -1,13 +1,15 @@
-import Navbar from "./Navbar"
-import ProfileLinks from "./ProfileLinks"
+import Navbar from "../shared/Navbar"
+import ProfileLinks from "../shared/ProfileLinks"
 import { Button } from "../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import AppliedJob from "./AppliedJob";
+import AppliedJob from "../shared/AppliedJob";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { getTimestamp } from "@/lib";
 const Profile = () => {
     const { user } = useSelector(store => store.auth)
+    const {allJobs} = useSelector(store => store.jobs)
+    
     return (
         <>
             <Navbar />
@@ -89,23 +91,24 @@ const Profile = () => {
                 </div>
 
                 <div className="mt-10 flex gap-10 w-[80%] mx-auto max-sm:w-full">
-                    <Tabs defaultValue="top posts" className="flex-1">
+                    <Tabs defaultValue="applied-jobs" className="flex-1">
                         <TabsList className="background-light800_dark400 min-h-[42px] p-1">
-                            <TabsTrigger value="top posts" className="tab">
+                            <TabsTrigger value="applied-jobs" className="tab">
                                 Applied Jobs
                             </TabsTrigger>
-                            <TabsTrigger value="answers" className="tab">
+                            <TabsTrigger value="saved-jobs" className="tab">
                                 Saved Jobs
                             </TabsTrigger>
                         </TabsList>
-                        <TabsContent value="top posts" className="mt-5 flex w-full flex-col gap-6">
+                        <TabsContent value="applied-jobs" className="mt-5 flex w-full flex-col gap-6">
                             <AppliedJob
-
+                                data={allJobs}
+                                
                             />
                         </TabsContent>
-                        <TabsContent value="answers" className="w-full flex flex-col gap-6">
+                        <TabsContent value="saved-jobs" className="w-full flex flex-col gap-6">
                             <AppliedJob
-
+                                
                             />
                         </TabsContent>
                     </Tabs>

@@ -1,5 +1,5 @@
-import JobCard from "./JobCard";
-import Navbar from "./Navbar"
+import JobCard from "../shared/JobCard";
+import Navbar from "../shared/Navbar"
 import { dummyJobs } from "@/lib";
 
 

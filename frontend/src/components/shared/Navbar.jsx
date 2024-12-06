@@ -10,6 +10,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "@/redux/authSlice";
+import { setAllJobs } from "@/redux/jobSlice";
 
 const Navbar = () => {
   const { mode } = useTheme(); // Get the current theme mode
@@ -17,7 +18,6 @@ const Navbar = () => {
   const navigateTo = useNavigate();
   const dispatch = useDispatch();
   const handleLogout = async () => {
-
     try {
       console.log("setUser from dispatch: ", dispatch(setUser));
       const res = await axios.get(`${import.meta.env.VITE_USER_API_END_POINT}/logout`)
@@ -25,6 +25,7 @@ const Navbar = () => {
       if (res.data.success) {
         console.log("Logged out successfully");
         dispatch(setUser(null));
+        dispatch(setAllJobs([]));
         navigateTo("/");
         toast.success(res.data.message);
       }
@@ -64,9 +65,21 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <ul className="hidden md:flex text-xl gap-6 text-dark-200 dark:text-light-900">
-            <li><Link to={`/`}>Home</Link></li>
-            <li><Link to={`/jobs`}>Jobs</Link></li>
-            <li><Link to={`/explore`}>Explore</Link></li>
+            {
+              user && user.role === "recruiter" ? (
+                <>
+                  <li><Link to={`/admin/companies`}>Companies</Link></li>
+                  <li><Link to={`/admin/jobs`}>Jobs</Link></li>
+                </>
+              ) :
+                (
+                  <>
+                    <li><Link to={`/`}>Home</Link></li>
+                    <li><Link to={`/jobs`}>Jobs</Link></li>
+                    <li><Link to={`/explore`}>Explore</Link></li>
+                  </>
+                )
+            }
           </ul>
 
           {/* User Section */}
@@ -84,29 +97,35 @@ const Navbar = () => {
                     </Avatar>
                   )
                 }
-                
+
               </PopoverTrigger>
               <PopoverContent className="background-light900_dark300">
                 <div className="flex items-center gap-5">
-                {
-                  user.profile.profilePhoto ? (
-                    <Avatar>
-                      <AvatarImage src={user.profile.profilePhoto} className="cursor-pointer" />
-                    </Avatar>
-                  ) : (
-                    <Avatar>
-                      <AvatarImage src="/assets/images/pfp.jpg" className="cursor-pointer" />
-                    </Avatar>
-                  )
-                }
+                  {
+                    user.profile.profilePhoto ? (
+                      <Avatar>
+                        <AvatarImage src={user.profile.profilePhoto} className="cursor-pointer" />
+                      </Avatar>
+                    ) : (
+                      <Avatar>
+                        <AvatarImage src="/assets/images/pfp.jpg" className="cursor-pointer" />
+                      </Avatar>
+                    )
+                  }
                   <p className="paragraph-medium text-dark200_light700">
                     Hrishabh Joshi
                   </p>
                 </div>
                 <div className="flex mt-4 gap-3">
-                  <Button className="small-medium btn-secondary text-dark400_light900 min-h-[41px]  rounded-lg px-4 py-3 shadow-none">
-                    <Link to={`/profile`}>View Profile</Link>
-                  </Button>
+                  {
+                    user.role === "student" && (
+                      <>
+                        <Button className="small-medium btn-secondary text-dark400_light900 min-h-[41px]  rounded-lg px-4 py-3 shadow-none">
+                          <Link to={`/profile`}>View Profile</Link>
+                        </Button>
+                      </>
+                    )
+                  }
                   <Button onClick={handleLogout} className="small-medium btn-secondary text-dark400_light900 min-h-[41px]  rounded-lg px-4 py-3 shadow-none">
                     Log Out
                   </Button>
@@ -128,7 +147,7 @@ const Navbar = () => {
             </div>
           )}
 
-          
+
           <MobileNav />
         </div>
       </div>

@@ -65,7 +65,7 @@ const SignUp = () => {
       }
     } catch (error) {
       console.error("Error during API call:", error);
-      toast.error(error.message);
+      toast.error(error.response.data.message);
     } finally {
       dispatch(setLoading(false));
     }

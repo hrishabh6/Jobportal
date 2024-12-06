@@ -1,5 +1,5 @@
-import DemoSideBar from "./DemoSideBar"
-import Navbar from "./Navbar"
+import DemoSideBar from "../shared/DemoSideBar"
+import Navbar from "../shared/Navbar"
 
 
 

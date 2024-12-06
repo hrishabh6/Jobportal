@@ -1,5 +1,6 @@
 import { useTheme } from "@/lib/useTheme";
-import { Input } from "./ui/input";
+import { Input } from "../ui/input";
+
 
 const HeroSection = () => {
     // bg-[#d4d6d7]

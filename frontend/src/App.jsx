@@ -2,12 +2,13 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import "./index.css"
 import Login from "./components/shared/Login"
 import SignUp from "./components/shared/SignUp"
-import Home from "./components/shared/Home"
-import Jobs from "./components/shared/Jobs"
-import Browse from "./components/shared/Browse"
-import Profile from "./components/shared/Profile"
+import Home from "./components/User/Home"
+import Jobs from "./components/User/Jobs"
+import Browse from "./components/User/Browse"
+import Profile from "./components/User/Profile"
 import JobDescription from "./components/shared/JobDescription"
 import UpdateProfile from "./components/shared/UpdateProfile"
+import Companies from "./components/admin/Companies"
 
 
 const appRouter = createBrowserRouter([
@@ -42,7 +43,12 @@ const appRouter = createBrowserRouter([
   {
     path: "/description/:id",
     element: <JobDescription />
+  },
+  {
+    path: "/admin/companies",
+    element: <Companies />
   }
+
 ])
 
 function App() {

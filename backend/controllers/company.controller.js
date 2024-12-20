@@ -5,7 +5,7 @@ import getDataURI from "../utils/dataURI.js";
 
 export const registerCompany = async (req, res) => {
     try {
-        const {companyName, description, website, location, userId} = req.body;
+        const {companyName, description, website, location, userId, linkedin} = req.body;
         if (!companyName) {
             return res.status(400).json({message: "Company name is required", success: false});
         }
@@ -46,6 +46,7 @@ export const registerCompany = async (req, res) => {
         if(website) companyCreate.website = website
         if(location) companyCreate.location = location
         if(userId) companyCreate.userId = userId
+        if(linkedin) companyCreate.linkedin = linkedin
         if(profilePicture) companyCreate.logo = profilePicture
         company = await Company.create(companyCreate);
 

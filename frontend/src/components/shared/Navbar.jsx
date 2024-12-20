@@ -113,7 +113,7 @@ const Navbar = () => {
                     )
                   }
                   <p className="paragraph-medium text-dark200_light700">
-                    Hrishabh Joshi
+                    {user.fullName}
                   </p>
                 </div>
                 <div className="flex mt-4 gap-3">

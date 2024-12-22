@@ -5,7 +5,7 @@ import getDataURI from "../utils/dataURI.js";
 
 export const registerCompany = async (req, res) => {
     try {
-        const {companyName, description, website, location, userId, linkedin} = req.body;
+        const {companyName, description, website, location, userId, linkedin, type, size, websitePlaceholder} = req.body;
         if (!companyName) {
             return res.status(400).json({message: "Company name is required", success: false});
         }
@@ -47,6 +47,9 @@ export const registerCompany = async (req, res) => {
         if(location) companyCreate.location = location
         if(userId) companyCreate.userId = userId
         if(linkedin) companyCreate.linkedin = linkedin
+        if(type) companyCreate.type = type
+        if(size) companyCreate.size = size
+        if(websitePlaceholder) companyCreate.websitePlaceholder = websitePlaceholder
         if(profilePicture) companyCreate.logo = profilePicture
         company = await Company.create(companyCreate);
 
@@ -62,7 +65,8 @@ export const registerCompany = async (req, res) => {
 export const getCompany = async (req, res) => {
     try {
         const userId = req.id; // This is the logged in user's id
-
+        console.log(userId);
+        
         const companies = await Company.find({userId});
         if (!companies) {
             return res.status(404).json({message: "No companies found", success: false});

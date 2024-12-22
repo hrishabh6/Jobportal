@@ -1,0 +1,221 @@
+/* From Uiverse.io by vinodjangid07 */ 
+.Btn {
+    position: relative;
+    width: 150px;
+    height: 55px;
+    border-radius: 45px;
+    border: none;
+    background-color: rgb(151, 95, 255);
+    color: white;
+    box-shadow: 0px 10px 10px rgb(210, 187, 253) inset,
+    0px 5px 10px rgba(5, 5, 5, 0.212),
+    0px -10px 10px rgb(124, 54, 255) inset;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  @media not all and (min-width: 768px)  {
+    .BtnHide {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .BtnMaxHide {
+        display: none;
+        
+    }
+}
+
+  .Btn::before {
+    width: 70%;
+    height: 2px;
+    position: absolute;
+    background-color: rgba(250, 250, 250, 0.678);
+    content: "";
+    filter: blur(1px);
+    top: 7px;
+    border-radius: 50%;
+  }
+  
+  .Btn::after {
+    width: 70%;
+    height: 2px;
+    position: absolute;
+    background-color: rgba(250, 250, 250, 0.137);
+    content: "";
+    filter: blur(1px);
+    bottom: 7px;
+    border-radius: 50%;
+  }
+  
+  .Btn:hover {
+    animation: jello-horizontal 0.9s both;
+  }
+  
+  @keyframes jello-horizontal {
+    0% {
+      transform: scale3d(1, 1, 1);
+    }
+  
+    30% {
+      transform: scale3d(1.25, 0.75, 1);
+    }
+  
+    40% {
+      transform: scale3d(0.75, 1.25, 1);
+    }
+  
+    50% {
+      transform: scale3d(1.15, 0.85, 1);
+    }
+  
+    65% {
+      transform: scale3d(0.95, 1.05, 1);
+    }
+  
+    75% {
+      transform: scale3d(1.05, 0.95, 1);
+    }
+  
+    100% {
+      transform: scale3d(1, 1, 1);
+    }
+  }
+
+.button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgb(20, 20, 20);
+  border: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.164);
+  cursor: pointer;
+  transition-duration: .3s;
+  overflow: hidden;
+  position: relative;
+}
+
+/* SVG Icon styles */
+.svgIcon {
+  width: 12px;
+  transition-duration: .3s;
+}
+
+.svgIcon path {
+  fill: white;
+}
+
+/* Pseudo-element before */
+.button::before {
+  position: absolute;
+  top: -20px;
+  content: "Delete";
+  color: white;
+  transition-duration: .3s;
+  font-size: 2px;
+  opacity: 0;
+}
+
+/* Hover effect for larger screens (above 768px) */
+@media (min-width: 768px) {
+  /* Hover effects */
+  .button:hover {
+    width: 140px;
+    border-radius: 50px;
+    background-color: rgb(255, 69, 69);
+    align-items: center;
+  }
+
+  .button:hover .svgIcon {
+    width: 50px;
+    transition-duration: .3s;
+    transform: translateY(60%);
+  }
+
+  .button:hover::before {
+    font-size: 13px;
+    opacity: 1;
+    transform: translateY(30px);
+    transition-duration: .3s;
+  }
+}
+
+/* From Uiverse.io by hamoode-taha-04 */ 
+.ui-btn {
+  cursor: pointer;
+  border-radius: 5px;
+  color: rgb(219, 218, 218);
+  border-style: solid;
+  background-color: transparent;
+  border-color: rgb(219, 218, 218);
+  width: 120px;
+  height: 40px;
+  transition: 0.2s ease;
+  text-transform: uppercase;
+  border-width: 2px;
+  font-weight: 500;
+  font-size: 18px;
+  letter-spacing: 2px;
+}
+.ui-btn:hover {
+  color: rgb(247, 247, 247);
+  background-color: rgb(202, 25, 25);
+  border-color: rgb(202, 25, 25);
+  text-shadow: 0 0 50px white, 0 0 20px white, 0 0 15px white;
+  box-shadow: 0 0 50px rgb(202, 25, 25), 0 0 30px rgb(202, 25, 25),
+    0 0 60px rgb(202, 25, 25), 0 0 120px rgb(202, 25, 25);
+  font-size: 20px;
+  width: 130px;
+  height: 50px;
+  letter-spacing: 3px;
+}
+.ui-btn:active {
+  width: 115px;
+  height: 38px;
+  letter-spacing: 0px;
+}
+
+/* From Uiverse.io by adamgiebl */ 
+.confirm-btn {
+  --green: #1BFD9C;
+  font-size: 15px;
+  padding: 0.7em 2.7em;
+  letter-spacing: 0.06em;
+  position: relative;
+  font-family: inherit;
+  border-radius: 0.6em;
+  overflow: hidden;
+  transition: all 0.3s;
+  line-height: 1.4em;
+  border: 2px solid var(--green);
+  background: linear-gradient(to right, rgba(27, 253, 156, 0.1) 1%, transparent 40%,transparent 60% , rgba(27, 253, 156, 0.1) 100%);
+  color: var(--green);
+  box-shadow: inset 0 0 10px rgba(27, 253, 156, 0.4), 0 0 9px 3px rgba(27, 253, 156, 0.1);
+}
+
+.confirm-btn:hover {
+  color: #82ffc9;
+  box-shadow: inset 0 0 10px rgba(27, 253, 156, 0.6), 0 0 9px 3px rgba(27, 253, 156, 0.2);
+}
+
+.confirm-btn:before {
+  content: "";
+  position: absolute;
+  left: -4em;
+  width: 4em;
+  height: 100%;
+  top: 0;
+  transition: transform .4s ease-in-out;
+  background: linear-gradient(to right, transparent 1%, rgba(27, 253, 156, 0.1) 40%,rgba(27, 253, 156, 0.1) 60% , transparent 100%);
+}
+
+.confirm-btn:hover:before {
+  transform: translateX(15em);
+}

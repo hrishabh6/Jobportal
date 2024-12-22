@@ -45,7 +45,7 @@ const Navbar = () => {
 
 
   return (
-    <nav className="p-4 w-full max-w-full background-light900_dark200 shadow-sm z-50">
+    <nav className="p-4 w-full max-w-full background-light900_dark200 shadow-sm z-50 sticky top-0 mb-4">
       <div className="flex items-center justify-between w-full max-w-7xl mx-auto overflow-hidden">
         {/* Logo Section */}
         <div className="flex items-center gap-2">

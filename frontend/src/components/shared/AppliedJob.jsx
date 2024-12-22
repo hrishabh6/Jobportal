@@ -25,34 +25,34 @@ const AppliedJob = ({ data = [] }) => {
                   className={`body-medium text-dark400_light700 flex items-center gap-3 max-sm:gap-1`}
                 >
                   <img
-                    src={job.job.company.logo || "/assets/images/pfp.jpg"}
+                    src={job?.job?.company?.logo || "/assets/images/pfp.jpg"}
                     alt={"profile"}
                     width={30}
                     height={30}
                     className={`object-contain rounded-full`}
                   />
                   <span className="text-[20px] ml-1 font-medium leading-[15.6px]">
-                    {job.job.company.name || "Company Name"}
+                    {job?.job?.company?.name || "Company Name"}
                   </span>
                   <span
                     className={`small-regular line-clamp-1 leading-3 max-sm:hidden`}
                   >
-                    • Applied {getTimestamp(job.createdAt) || "N days ago"}
+                    • Applied {getTimestamp(job?.createdAt) || "N days ago"}
                   </span>
                 </p>
               </div>
               <div className="mt-5 max-sm:mt-3 flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
                 <div>
-                  <Link to={`/description/${job.job._id}`}>
+                  <Link to={`/description/${job?.job?._id}`}>
                     <h3 className="sm:h3-semibold base-semibold text-dark200_light900 line-clamp-1 flex-1">
-                      {job.job.title || "Job Title"}
+                      {job?.job?.title || "Job Title"}
                     </h3>
                   </Link>
                 </div>
               </div>
               <div className="mt-3.5 flex flex-wrap gap-2">
                 <p className="paragraph-regular text-dark400_light800">
-                  {job.job.description ||
+                  {job?.job?.description ||
                     "We are looking for a skilled candidate for this role."}
                 </p>
               </div>

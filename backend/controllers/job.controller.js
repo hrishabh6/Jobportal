@@ -93,3 +93,16 @@ export const getJobsForRecruiter = async (req, res) => {
         return res.status(500).json({message: "Internal Server Error", success: false});
     }
 }
+
+export const getJobForAParticularCompany = async (req, res) => {
+    try {
+        const companyId = req.params.id;
+        
+        const job = await Job.find({company : companyId}).populate("company"); 
+        
+        return res.status(200).json({job, success: true});
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({message: "Internal Server Error", success: false});
+    }
+}

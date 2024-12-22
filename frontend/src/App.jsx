@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import "./index.css"
+import "./custom.css"
 import Login from "./components/shared/Login"
 import SignUp from "./components/shared/SignUp"
 import Home from "./components/User/Home"
@@ -10,6 +11,7 @@ import JobDescription from "./components/shared/JobDescription"
 import UpdateProfile from "./components/shared/UpdateProfile"
 import Companies from "./components/admin/Companies"
 import CreateCompany from "./components/admin/CreateCompany"
+import CompanyPage from "./components/admin/CompanyPage"
 
 
 const appRouter = createBrowserRouter([
@@ -52,7 +54,11 @@ const appRouter = createBrowserRouter([
   {
     path: "/admin/companies/create",
     element: <CreateCompany />
-  }
+  },
+  {
+    path: "/admin/companies/:id",
+    element: <CompanyPage />
+  },
   
 ])
 

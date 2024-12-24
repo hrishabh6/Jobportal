@@ -34,6 +34,12 @@ const JobSchema = new mongoose.Schema({
         required: true, 
     }],
 
+    status: {
+        type: String,
+        enum: ['open', 'closed'], // Active or inactive job
+        default: 'open',
+    },
+
     experience: {
         type: String, // e.g., "2+ years of experience"
         required: false,

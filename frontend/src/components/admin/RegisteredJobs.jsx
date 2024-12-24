@@ -11,9 +11,29 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-const RegisteredJobs = ({ data = [] }) => {
-    const handleDelete = () => {
-        console.log("Delete");
+import { toast } from "sonner";
+const RegisteredJobs = ({ data = [], setData }) => {
+    const handleDelete = async (id) => {
+        try {
+                console.log("Delete route accessed with ID:", id);
+             const response =  await fetch(`${import.meta.env.VITE_JOB_API_END_POINT}/delete/${id}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+            });
+            const data = await response.json();
+            console.log(data)
+            if(data.success){
+                toast.success(data.message)
+                setData(prevData => prevData.filter(job => job._id !== id))
+            } else {
+                toast.error("Error while deleting job");
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
     if (!Array.isArray(data)) {
         console.error("Invalid data prop passed to AppliedJob:", data);
@@ -69,7 +89,7 @@ const RegisteredJobs = ({ data = [] }) => {
                                             <DialogFooter>
                                                 <div className="flex justify-between gap-4 items-center mt-4">
                                                     <DialogClose asChild>
-                                                        <button className="ui-btn" onClick={handleDelete}>Delete</button>
+                                                        <button className="ui-btn" onClick={() => handleDelete(job._id)}>Delete</button>
                                                     </DialogClose>
                                                     <DialogClose asChild>
                                                         <button className="confirm-btn"> Nah, just kidding</button>
@@ -87,7 +107,7 @@ const RegisteredJobs = ({ data = [] }) => {
                             </div>
                             <div className="mt-5 max-sm:mt-3 flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
                                 <div>
-                                    <Link to={`/description/${job?.job?._id}`}>
+                                    <Link to={`/description/${job._id}`}>
                                         <h3 className="sm:h3-semibold base-semibold text-dark200_light900 line-clamp-1 flex-1">
                                             {job.title || "Job Title"}
                                         </h3>
@@ -106,6 +126,41 @@ const RegisteredJobs = ({ data = [] }) => {
                                     job.applications.length
                                 }
                             </div>
+
+                            <div >
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <button className="mt-4 inline-flex h-12 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
+                                            Close Job
+                                        </button>
+                                    </DialogTrigger>
+                                    <DialogContent className="sm:max-w-[425px] bg-slate-700 dark:bg-dark-400 text-white ">
+                                        <DialogHeader>
+                                            <DialogTitle className="text-center">WARNING</DialogTitle>
+                                            <DialogDescription className="text-light-700 dark:text-white mt-4">
+                                                Are you sure you want to delete this job
+                                            </DialogDescription>
+                                        </DialogHeader>
+
+                                        <DialogFooter>
+                                            <div className="flex justify-between gap-4 items-center mt-4">
+                                                <DialogClose asChild>
+                                                    <button className="ui-btn" onClick={handleDelete}>Close</button>
+                                                </DialogClose>
+                                                <DialogClose asChild>
+                                                    <button className="confirm-btn"> Nah, just kidding</button>
+                                                </DialogClose>
+                                            </div>
+
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </Dialog>
+                            </div>
+
+
+
+
+
                         </div>
                     );
                 })
@@ -116,7 +171,8 @@ const RegisteredJobs = ({ data = [] }) => {
     );
 };
 RegisteredJobs.propTypes = {
-    data: PropTypes.array
+    data: PropTypes.array,
+    setData: PropTypes.func.isRequired
 };
 
 export default RegisteredJobs;

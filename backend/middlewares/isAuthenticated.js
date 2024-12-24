@@ -7,6 +7,7 @@ const isAuthenticated = async (req, res, next) => {
         const accessToken = req.cookies.token;
         const refreshTokenFromCookie = req.cookies.refreshToken; // assuming it's stored as 'refreshToken'
 
+
         if (!accessToken) {
             return res.status(401).json({
                 message: "Access token is missing.",
@@ -29,6 +30,7 @@ const isAuthenticated = async (req, res, next) => {
                         success: false,
                     });
                 }
+                
 
                 // Call the refreshToken function to generate a new access token
                 const newAccessToken = await refreshToken(refreshTokenFromCookie);

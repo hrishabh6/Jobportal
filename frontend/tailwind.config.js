@@ -5,6 +5,7 @@ export default {
 	content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
 	theme: {
 		extend: {
+			
 			autofill: 'transparent',
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -78,9 +79,10 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				
-			},
 
+			},
+			
+			
 			fontFamily: {
 				inter: ["var(--font-inter)"],
 				spaceGrotesk: ["var(--font-spaceGrotesk)"]
@@ -91,7 +93,7 @@ export default {
 				'light-300': '-10px 10px 20px 0px rgba(218, 213, 213, 0.10)',
 				'dark-100': '0px 2px 10px 0px rgba(46, 52, 56, 0.10)',
 				'dark-200': '2px 0px 20px 0px rgba(39, 36, 36, 0.04)',
-					
+
 			},
 			backgroundImage: {
 				'auth-dark': "url('/assets/images/auth-dark.png')",
@@ -101,6 +103,14 @@ export default {
 				xs: '420px'
 			},
 			keyframes: {
+				shimmer: {
+					from: {
+						"backgroundPosition": "0 0"
+					},
+					to: {
+						"backgroundPosition": "-200% 0"
+					}
+				},
 				'accordion-down': {
 					from: {
 						height: '0'
@@ -119,6 +129,7 @@ export default {
 				}
 			},
 			animation: {
+				shimmer: "shimmer 2s linear infinite",
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out'
 			}

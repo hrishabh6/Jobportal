@@ -12,6 +12,8 @@ import UpdateProfile from "./components/shared/UpdateProfile"
 import Companies from "./components/admin/Companies"
 import CreateCompany from "./components/admin/CreateCompany"
 import CompanyPage from "./components/admin/CompanyPage"
+import EditCompany from "./components/admin/EditCompany"
+import CreateJob from "./components/admin/CreateJob"
 
 
 const appRouter = createBrowserRouter([
@@ -59,6 +61,14 @@ const appRouter = createBrowserRouter([
     path: "/admin/companies/:id",
     element: <CompanyPage />
   },
+  {
+    path: "/admin/companies/:id/edit",
+    element: <EditCompany />
+  },
+  {
+    path: "/admin/company/:id/jobs/create",
+    element: <CreateJob />
+  },
   
 ])
 
@@ -73,3 +83,9 @@ function App() {
 }
 
 export default App
+
+        
+  
+        
+      
+

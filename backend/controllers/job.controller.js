@@ -2,7 +2,7 @@ import { Job } from "../models/job.model.js";
 
 export const postJob = async (req, res) => {
     try {
-        const { title, description, company, location, employmentType, salary, requirements, experience, positions } = req.body;
+        const { title, description, company, location, employmentType, salary, requirements, experience, positions, details } = req.body;
 
         const userId = req.id;
 
@@ -50,9 +50,10 @@ export const postJob = async (req, res) => {
             requirements,
             postedBy: userId,
             positions,
+            details,
         };
 
-        if (salary) createJob.salary = Number(salary);
+       
         if (experience) createJob.experience = experience;
 
         const job = await Job.create(createJob);

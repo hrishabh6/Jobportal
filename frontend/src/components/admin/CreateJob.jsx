@@ -1,13 +1,16 @@
 import axios from "axios";
 import Navbar from "../shared/Navbar";
 import { Label } from "../ui/label";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "@/redux/authSlice";
 import { useNavigate, useParams } from "react-router-dom";
+import { Editor } from "@tinymce/tinymce-react";
+import { useTheme } from "@/lib/useTheme";
 
 const CreateJob = () => {
+    const { mode } = useTheme();
     const { loading } = useSelector((store) => store.auth);
     const { id } = useParams();
     const [input, setInput] = useState({
@@ -18,6 +21,7 @@ const CreateJob = () => {
         experience: "",
         requirements: "",
         description: "",
+        details: "",
         positions: "",
         company: id,
     });
@@ -35,17 +39,14 @@ const CreateJob = () => {
         }));
     };
 
+
+
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const submitHandler = async (e) => {
         e.preventDefault();
-
-        // Convert `requirements` string into an array
-        
-
-        
-
         try {
             console.log("input data:", input);
 
@@ -68,15 +69,18 @@ const CreateJob = () => {
         }
     };
 
+
+    
+
+    const editorRef = useRef(null);
     if (loading) {
         return <div>Loading...</div>;
     }
-
     return (
         <div className="text-dark200_light900 background-light900_dark300 min-h-[100vh]">
             <Navbar />
-            <div className="flex flex-col items-center justify-center mt-11">
-                <div className="w-full max-w-md background-light900_dark200 rounded-lg shadow-md p-6">
+            <div className="flex flex-col items-center justify-center mt-11 md:max-w-[50%] md:mx-auto max-md:w-full ">
+                <div className="w-full background-light900_dark200 rounded-lg shadow-md p-6">
                     <h2 className="text-2xl font-bold font-dark200_light900 mb-4">Create Job</h2>
 
                     <form onSubmit={submitHandler} className="flex flex-col gap-3">
@@ -171,11 +175,49 @@ const CreateJob = () => {
                             value={input.description}
                             name="description"
                             onChange={handleEventChange}
-                            rows={10}
+                            rows={5}
                             className="background-light850_dark100 placeholder text-dark200_light800 border-0 rounded-md p-2 mb-4 focus:background-light800_dark400 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                             placeholder="A brief description about the job"
                         ></textarea>
-
+                        <Editor
+                            apiKey={import.meta.env.VITE_TINY_EDITOR_API_KEY}
+                            onInit={(evt, editor) => {
+                                // @ts-ignore
+                                editorRef.current = editor;
+                            }}
+                            onEditorChange={(content) => {
+                                setInput({ ...input, details: content });
+                            }}
+                            initialValue={""}
+                            init={{
+                                height: 350,
+                                menubar: false,
+                                plugins: [
+                                    "advlist",
+                                    "autolink",
+                                    "lists",
+                                    "link",
+                                    "image",
+                                    "charmap",
+                                    "preview",
+                                    "anchor",
+                                    "searchreplace",
+                                    "visualblocks",
+                                    "codesample",
+                                    "fullscreen",
+                                    "insertdatetime",
+                                    "media",
+                                    "table",
+                                ],
+                                toolbar:
+                                    "undo redo | codesample | " +
+                                    "bold italic forecolor | alignleft aligncenter " +
+                                    "alignright alignjustify | bullist numlist",
+                                content_style: "body { font-family:Inter; font-size:16px }",
+                                skin: mode === "dark" ? "oxide-dark" : "oxide",
+                                content_css: mode === "dark" ? "dark" : "light",
+                            }}
+                        />
                         <button
                             type="submit"
                             className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-indigo-600 hover:to-blue-600 transition ease-in-out duration-150"

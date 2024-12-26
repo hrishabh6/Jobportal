@@ -41,7 +41,7 @@ const RegisteredJobs = ({ data = [], setData }) => {
     }
 
     return (
-        <div>
+        <div className="">
             {data.length > 0 ? (
                 data.map((job, index) => {
                     return (

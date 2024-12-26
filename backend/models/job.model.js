@@ -44,6 +44,10 @@ const JobSchema = new mongoose.Schema({
         type: String, // e.g., "2+ years of experience"
         required: false,
     },
+    details: {
+        type: String, //full details of job and role
+        required: false,
+    },
 
     positions: {
         type: Number, // e.g., 5

@@ -147,4 +147,8 @@ export const getTimestamp = (createdAt) => {
 
 };
 
+export const GlobalSearchAdminFilter = [
+  { name: "Company", value: "company" },
+  { name: "Job", value: "job" }
+];
 

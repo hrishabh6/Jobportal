@@ -136,7 +136,7 @@ const CompanyPage = () => {
                         <div className="mt-4">
                             <div className="hidden dark:flex">
                                 <button className="addJobButton" onClick={() => navigate(`/admin/company/${id}/jobs/create`)}>
-                                    <span>Create New Job</span>
+                                    <span>Create New Job</span> 
                                 </button>
                             </div>
                             <div className=" dark:hidden">

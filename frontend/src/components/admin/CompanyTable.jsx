@@ -27,7 +27,6 @@ export function CompanyTable() {
                     credentials: "include",
                 });
                 const data = await response.json();
-                console.log(document.cookie);
                 setCompanies(data?.data); // Ensure companies is an array
                 
             } catch (error) {
@@ -53,7 +52,7 @@ export function CompanyTable() {
 
     return (
         <Table>
-            <TableCaption>List of your registered companies.</TableCaption>
+            <TableCaption className="mb-4">List of your registered companies.</TableCaption>
             <TableHeader>
                 <TableRow>
                     <TableHead className="w-[100px]">Logo</TableHead>

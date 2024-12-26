@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../shared/Navbar';
-import { Input } from '../ui/input';
 import { CompanyTable } from './CompanyTable';
+import GlobalSearch from '../shared/globalSearch';
 
 const Companies = () => {
   const navigate = useNavigate();
@@ -41,18 +41,7 @@ const Companies = () => {
 
         <div className="flex justify-between items-center gap-5 max-sm:p-5 p-3">
           <div className="w-1/2 max-sm:w-3/4 background-light700_dark400 relative flex min-h-[56px] grow items-center gap-1 rounded-xl px-4">
-            <img
-              src="/assets/icons/search.svg"
-              width={24}
-              height={24}
-              alt="search"
-              className="cursor-pointer"
-            />
-            <Input
-              type="text"
-              placeholder="Filter by Name"
-              className=" no-focus paragraph-regular placeholder text-dark400_light700 border-none shadow-none outline-none bg-transparent"
-            />
+            <GlobalSearch/>
           </div>
 
           {/* Ensuring this button is visible on large screens */}

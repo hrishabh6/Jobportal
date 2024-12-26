@@ -11,6 +11,7 @@ import { toast } from "sonner"
 import useGetAllAppliedJobs from "@/hooks/getAllAppliedJobs"
 import { setLoading } from "@/redux/authSlice"
 import { Skeleton } from "../ui/skeleton"
+import ParseHTML from "./ParseHTML"
 const JobDescription = () => {
     const isSaved = false
     const { allJobs } = useSelector(store => store.jobs);
@@ -26,7 +27,6 @@ const JobDescription = () => {
             dispatch(setLoading(true));
             const res = await axios.get(`${import.meta.env.VITE_JOB_API_END_POINT}/get/${id}`);
             if (res.data.success) {
-                console.log(res.data.job);
                 setJob(res.data.job);
 
                 // Check if user is logged in
@@ -168,7 +168,10 @@ const JobDescription = () => {
                         <p className="text-dark200_light900 paragraph-medium">{job.description}
                         </p>
                     </div>
-                    {/* Use a text editor to take job requirements and parse the html here */}
+                    <div>
+                        <h2 className="h2-semibold text-dark200_light900">Job Details</h2>
+                        <p className="text-dark200_light900 paragraph-medium"><ParseHTML data={job.details}/></p>
+                    </div>
                     <div className="flex flex-col gap-3">
                         <h2 className="h2-semibold text-dark200_light900">Job Requirements</h2>
                         <p className="text-dark200_light900 paragraph-medium">

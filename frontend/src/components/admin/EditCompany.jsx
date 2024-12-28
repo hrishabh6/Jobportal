@@ -16,7 +16,7 @@ const EditCompany = () => {
         fileInputRef.current.click(); // Trigger the file input click
     };
 
-    const {id} = useParams();
+    const { id } = useParams();
     const [isLoading, setIsLoading] = useState(false);
     const [company, setCompany] = useState(null);
     const [input, setInput] = useState({
@@ -30,7 +30,7 @@ const EditCompany = () => {
         websitePlaceholder: "",
         profile: null,
     });
-    
+
     useEffect(() => {
         const fetchCompany = async () => {
             try {
@@ -43,7 +43,7 @@ const EditCompany = () => {
                     credentials: "include",
                 });
                 const data = await response.json();
-                
+
                 setCompany(data); // Update the state with fetched data
 
             } catch (error) {
@@ -54,7 +54,7 @@ const EditCompany = () => {
         }
         fetchCompany();
     }, [])
-    
+
     useEffect(() => {
         if (company) {
             setInput({
@@ -65,6 +65,7 @@ const EditCompany = () => {
                 description: company.data.description || "",
                 size: company.data.size || "",
                 type: company.data.type || "",
+                bio: company.data.bio || "",
                 websitePlaceholder: company.data.websitePlaceholder || "",
                 profile: null, // Files aren't included in the fetched data
             });
@@ -93,13 +94,14 @@ const EditCompany = () => {
         formData.append("description", input.description);
         formData.append("size", input.size);
         formData.append("type", input.type);
+        formData.append("bio", input.bio);
         formData.append("websitePlaceholder", input.websitePlaceholder);
         if (input.profile) {
             formData.append("profile", input.profile);
         }
 
         try {
-            dispatch(setLoading(true)); 
+            dispatch(setLoading(true));
             const res = await axios.put(`${import.meta.env.VITE_COMPANY_API_END_POINT}/update/${id}`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -132,7 +134,7 @@ const EditCompany = () => {
                     <h2 className="text-2xl font-bold font-dark200_light900 mb-4">Edit Company</h2>
 
                     <form onSubmit={submitHandler} className="flex flex-col gap-3">
-                    <Label htmlFor="name" className="text-dark200_light900  mt-4">Company&apos;s Name <span className="text-orange-500">*</span></Label>
+                        <Label htmlFor="name" className="text-dark200_light900  mt-4">Company&apos;s Name <span className="text-orange-500">*</span></Label>
                         <input
                             value={input.name}
                             name="name"
@@ -195,6 +197,15 @@ const EditCompany = () => {
                             className="background-light850_dark100 placeholder text-dark200_light800 border-0 rounded-md p-2 mb-4 focus:background-light800_dark400 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                             placeholder="eg; digital marketing"
                         />
+                        <Label htmlFor="bio" className="text-dark200_light900 ">Company&apos;s bio</Label>
+                        <input
+                            value={input.bio}
+                            name="bio"
+                            onChange={handleEventChange}
+                            type="text"
+                            className="background-light850_dark100 placeholder text-dark200_light800 border-0 rounded-md p-2 mb-4 focus:background-light800_dark400 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+                            placeholder="Should be a brief description of the company"
+                        />
                         <Label htmlFor="description" className="text-dark200_light900 ">Company&apos;s description <span className="text-orange-500">*</span></Label>
                         <textarea
                             value={input.description}
@@ -208,7 +219,7 @@ const EditCompany = () => {
                             <Label htmlFor="profile-upload">
                                 <button
                                     type="button"
-                                    onClick={handleButtonClick} 
+                                    onClick={handleButtonClick}
                                     className="bg-slate-950 text-slate-400 border border-slate-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-300 group"
                                 >
                                     <span className="bg-slate-400 shadow-slate-400 absolute -top-[150%] left-0 inline-flex w-80 h-[5px] rounded-md opacity-50 group-hover:top-[150%] duration-500 shadow-[0_0_10px_10px_rgba(0,0,0,0.3)]"></span>

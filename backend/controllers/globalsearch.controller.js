@@ -82,7 +82,7 @@ export async function globalAdminSearch(req, res) {
         results = extractFields(queryResults, modelInfo.searchField, typeLower);
       }
 
-      console.log("Results before sending:", results);
+      
       return res.json(results); // Return as JSON
     } catch (error) {
       console.error(`Error fetching admin global results: ${error.message}`);

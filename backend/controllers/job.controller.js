@@ -139,17 +139,15 @@ export const getJobForAParticularCompany = async (req, res) => {
 export const deleteJob = async (req, res) => {
     try {
         const id = req.params.id;
-        console.log("Delete route accessed with ID:", req.params.id);
+        
 
         const userId = req.id;
-        console.log("User ID:", userId);
         
         // Find the job by ID
         const job = await Job.findById(id);
         if (!job) {
             return res.status(404).json({message: "Job not found", success: false});
         }
-        console.log(job.postedBy.toString(), userId);
         
         // Check if the user is authorized to delete this job
         if (job.postedBy.toString() !== userId) {
@@ -165,3 +163,18 @@ export const deleteJob = async (req, res) => {
         return res.status(500).json({message: "Internal Server Error", success: false});
     }
 };
+
+export const jobStatus = async (req, res) => {
+    try {
+        const id = req.params.id;
+        console.log(id);
+        const { updatedStatus } = req.body;
+        const job = await Job.findById(id)
+        job.status = updatedStatus;
+        await job.save();
+        return res.status(200).json({message: "Job status updated successfully", success: true, status: job.status});
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({message: "Internal Server Error", success: false});
+    }
+}

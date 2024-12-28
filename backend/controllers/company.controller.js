@@ -98,7 +98,7 @@ export const getCompanyById = async (req, res) => {
 
 export const updateCompany = async (req, res) => {
    try {
-    const {name, description, website, location, linkedin, websitePlaceholder, size, type, } = req.body;
+    const {name, description, website, location, linkedin, websitePlaceholder, size, type, bio } = req.body;
     
         const file = req.file
         console.log(file);
@@ -133,6 +133,7 @@ export const updateCompany = async (req, res) => {
     if (size) updateData.size = size;
     if (type) updateData.type = type;
     if (profilePicture) updateData.logo = profilePicture;
+    if (bio) updateData.bio = bio;
 
     const company = await Company.findByIdAndUpdate(req.params.id, updateData, {new: true});
 

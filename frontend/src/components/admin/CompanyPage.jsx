@@ -53,7 +53,7 @@ const CompanyPage = () => {
             }
         }
         fetchJobs();
-    }, []);
+    }, [id]);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -100,7 +100,7 @@ const CompanyPage = () => {
                                 </div>
                                 <div className="flex flex-col md:items-center justify-center gap-2">
                                     <h2 className="h2-semibold">{company.name || "Company Name"}</h2>
-                                    <p className="paragraph-semibold">Company-driven platform for problem-solving</p>
+                                    <p className="paragraph-semibold">{company.bio}</p>
                                 </div>
                             </div>
                             <div>
@@ -126,9 +126,9 @@ const CompanyPage = () => {
                     </div>
                 </div>
                 <div className="flex flex-col gap-4 mt-4">
-                    <div>
-                        <h2>About</h2>
-                        <p>{company.about || "No information available about this company."}</p>
+                    <div className="mt-4">
+                        <h2 className="h2-semibold">About</h2>
+                        <p className="paragraph-regular">{company.description || "No information available about this company."}</p>
                         <div className="flex justify-between items-center mt-5">
                             <h1 className="h1-bold">Jobs Created in {company.name}</h1>
                             <p className="text-blue-400 cursor-pointer">View All Jobs</p>

@@ -83,16 +83,17 @@ export const getApplications = async (req, res) => {
 
     } catch (error) {
         console.log(error)
-        return res.status(500).json({message: "Internal Server Error", success})
+        return res.status(500).json({message: "Internal Server Error", success: false})
     }
 }
 
 export const updateApplicationStatus = async (req, res) => {
     try {
         const applicationId = req.params.id;
-        const {status} = req.body;
+        const {updatedStatus} = req.body;
+        console.log(updatedStatus)
         
-        if (!status) {
+        if (!updatedStatus) {
             return res.status(400).json({message: "Please provide a status", success: false});
         }
 
@@ -101,10 +102,10 @@ export const updateApplicationStatus = async (req, res) => {
             return res.status(404).json({message: "Application not found", success: false});
         }
 
-        application.status = status.toLowerCase();
+        application.status = updatedStatus.toLowerCase();
         await application.save();
 
-        return res.status(200).json({message: "Application updated successfully", success: true});
+        return res.status(200).json({message: "Application Updated Successfully", application, success: true});
 
     } catch (error) {
         console.log(error);

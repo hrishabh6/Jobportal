@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 const GlobalResult = () => {
-    const searchParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
+    const searchParams = useMemo(() => new URLSearchParams(location.search), []);
     const [isLoading, setIsLoading] = useState(false);
     const [result, setResult] = useState([]);
         
@@ -40,7 +40,7 @@ const GlobalResult = () => {
         }   
         fetchResult()
         console.log(result)
-    }, [global, type]);
+    }, [global, type, result]);
 
     const renderLink = (type, id) => {
         switch (type) {

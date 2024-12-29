@@ -3,8 +3,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
 import GlobalResult from "./GlobalResult";
+import PropTypes from 'prop-types';
 
-const GlobalSearch = () => {
+const GlobalSearch = ({type}) => {
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -14,7 +15,6 @@ const GlobalSearch = () => {
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            // @ts-ignore
             if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
                 setopen(false);
                 setSearch('');
@@ -82,9 +82,12 @@ const GlobalSearch = () => {
                 }}
             />
 
-            {open && <GlobalResult />}
+            {open && <GlobalResult searchType={type}/>}
         </div>
     );
+};
+GlobalSearch.propTypes = {
+    type: PropTypes.string.isRequired,
 };
 
 export default GlobalSearch;

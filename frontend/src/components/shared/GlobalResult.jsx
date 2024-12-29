@@ -1,12 +1,13 @@
 import  { useEffect, useMemo, useState } from "react";
+import PropTypes from 'prop-types';
 import { ReloadIcon } from "@radix-ui/react-icons";
 import GlobalFilters from "./GlobalFilters";
 
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-const GlobalResult = () => {
-    const searchParams = useMemo(() => new URLSearchParams(location.search), []);
+const GlobalResult = ({searchType}) => {
+    const searchParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
     const [isLoading, setIsLoading] = useState(false);
     const [result, setResult] = useState([]);
         
@@ -15,10 +16,10 @@ const GlobalResult = () => {
     const type = searchParams.get("type");
 
     useEffect(() => {
-        const fetchResult = async () => {
+        const fetchResultForAdmin = async () => {
             try {
                 setIsLoading(true)
-                const res = await axios.post(`${import.meta.env.VITE_GLOBAL_API_END_POINT}admin/search`,{query : global, type}, {
+                const res = await axios.post(`${import.meta.env.VITE_GLOBAL_API_END_POINT}/admin/search`,{query : global, type}, {
                     headers: {
                       "Content-Type": "application/json",
                     },
@@ -28,9 +29,7 @@ const GlobalResult = () => {
                   
                   setResult(res.data)
 
-                  if(res) {
-                      setResult(JSON.parse(res))
-                    }
+                  
                 } catch (error) {
                 console.log(error)
             } finally {
@@ -38,9 +37,33 @@ const GlobalResult = () => {
             }
 
         }   
-        fetchResult()
+        const FetchResultForUser = async () => {
+            try {
+                setIsLoading(true)
+                const res = await axios.post(`${import.meta.env.VITE_GLOBAL_API_END_POINT}/search`,{query : global, type}, {
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    withCredentials: true,
+                  } )
+                  console.log(res);
+                  
+                  setResult(res.data)
+
+                  
+                } catch (error) {
+                console.log(error)
+            } finally {
+                setIsLoading(false)
+            }
+        }
+        if(searchType === 'admin-global-search'){
+            fetchResultForAdmin()
+        } else if (searchType === 'user-global-search'){
+            FetchResultForUser()
+        }
         console.log(result)
-    }, [global, type, result]);
+    }, [global, type]);
 
     const renderLink = (type, id) => {
         switch (type) {
@@ -110,6 +133,9 @@ const GlobalResult = () => {
             </div>
         </div>
     );
+};
+GlobalResult.propTypes = {
+    searchType: PropTypes.string.isRequired,
 };
 
 export default GlobalResult;

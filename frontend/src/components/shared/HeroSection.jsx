@@ -1,5 +1,5 @@
 import { useTheme } from "@/lib/useTheme";
-import { Input } from "../ui/input";
+import GlobalSearch from "./GlobalSearch";
 
 
 const HeroSection = () => {
@@ -29,18 +29,7 @@ const HeroSection = () => {
                         <img src="/assets/images/job-search.png" alt="job-search" className="h-[50vh] w-1/2 max-sm:w-fit max-sm:mt-5" />
                     </div>
                     <div className="w-1/2 max-sm:w-3/4 background-light700_dark400 relative flex min-h-[56px] grow items-center gap-1 rounded-xl px-4">
-                        <img
-                            src="/assets/icons/search.svg"
-                            width={24}
-                            height={24}
-                            alt="search"
-                            className="cursor-pointer"
-                        />
-                        <Input
-                            type="text"
-                            placeholder="Search for Jobs, locations, Companies..."
-                            className=" no-focus paragraph-regular placeholder text-dark400_light700 border-none shadow-none outline-none bg-transparent"
-                        />
+                        <GlobalSearch type={"user-global-search"}/>
                     </div>
 
                 </div>

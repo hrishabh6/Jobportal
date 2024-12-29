@@ -41,7 +41,7 @@ const Companies = () => {
 
         <div className="flex justify-between items-center gap-5 max-sm:p-5 p-3">
           <div className="w-1/2 max-sm:w-3/4 background-light700_dark400 relative flex min-h-[56px] grow items-center gap-1 rounded-xl px-4">
-            <GlobalSearch/>
+            <GlobalSearch type={"admin-global-search"}/>
           </div>
 
           {/* Ensuring this button is visible on large screens */}

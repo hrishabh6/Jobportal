@@ -22,7 +22,7 @@ const Home = () => {
   const fetchAllJobs = async (limit = 6) => {
 
     try {
-      const res = await axios.get(
+      const res = await axios.post(
         `${import.meta.env.VITE_JOB_API_END_POINT}/get`,
         { params: { limit } } // Pass limit as query parameter
       );

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../shared/Navbar';
 import { CompanyTable } from './CompanyTable';
-import GlobalSearch from '../shared/globalSearch';
+import GlobalSearch from '../shared/GlobalSearch';
 
 const Companies = () => {
   const navigate = useNavigate();

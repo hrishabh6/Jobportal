@@ -17,11 +17,9 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 
 app.use(cors({
-    origin: 'http://localhost:5173', // Allow only the frontend origin
+    origin: 'https://jobportal-m9p5.vercel.app', // Allow the deployed frontend origin
     credentials: true, // Allow credentials (cookies, authorization headers)
 }));
-
-
 const PORT = process.env.PORT || 3000
 
 app.use('/api/v1/user', userRoute)

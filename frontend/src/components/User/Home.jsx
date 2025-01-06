@@ -8,8 +8,8 @@ import Navbar from "../shared/Navbar";
 import useGetAllAppliedJobs from "@/hooks/getAllAppliedJobs";
 import { useSelector } from "react-redux";
 import HeroSection from "../shared/HeroSection";
-import Category from "../shared/Category";
 import { useNavigate } from "react-router-dom";
+import MarqueeDemo from "../shared/Slider";
 
 const Home = () => {
   const [allJobs, setAllJobs] = useState([]); // Default state as an empty array
@@ -58,8 +58,7 @@ const Home = () => {
     <div className="background-light900_dark300">
       <Navbar />
       <HeroSection/>
-      <Category />
-
+      <MarqueeDemo/>
       <h2 className="h2-semibold text-dark200_light900 text-center mt-9">
         Latest Jobs
       </h2>

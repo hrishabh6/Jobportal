@@ -2,7 +2,6 @@ import { Link } from "react-router-dom"
 import PropTypes from 'prop-types';
 
 const JobCard = ({jobId, title, description, company, location, employmentType, salary, experience, positions, logo }) => {
-    
     return (
 
         <div >

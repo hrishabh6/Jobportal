@@ -4,7 +4,7 @@ import { deleteJob, getAllJobs, getJobForAParticularCompany, getjobsById, getJob
 const router = express.Router();
 
 router.route('/post').post(isAuthenticated, postJob)
-router.route('/get').get(getAllJobs)
+router.route('/get').post(getAllJobs)
 router.route('/get/:id').get( getjobsById)
 router.route('/updateStatus/:id').post(isAuthenticated, jobStatus)
 router.route('/delete/:id').get(isAuthenticated, deleteJob)

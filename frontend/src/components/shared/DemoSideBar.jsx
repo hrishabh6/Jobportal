@@ -15,8 +15,9 @@ import {
 } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from '@heroicons/react/20/solid'
-import { dummyJobs } from '@/lib'
 import JobCard from './JobCard'
+import axios from 'axios'
+
 
 const sortOptions = [
     { name: 'Newest', href: '#', current: false },
@@ -58,10 +59,10 @@ const filters = [
         id: 'title',
         name: 'Job Title',
         options: [
-            { value: 'software-developer', label: 'Software Developer', checked: false },
+            { value: 'developer', label: 'Software Developer', checked: false },
             { value: 'data-analyst', label: 'Data Analyst', checked: false },
             { value: 'project-manager', label: 'Project Manager', checked: false },
-            { value: 'ui-ux-designer', label: 'UI/UX Designer', checked: false },
+            { value: 'ui/ux', label: 'UI/UX Designer', checked: false },
             { value: 'digital-marketer', label: 'Digital Marketer', checked: false },
             { value: 'content-writer', label: 'Content Writer', checked: false },
             { value: 'sales-executive', label: 'Sales Executive', checked: false },
@@ -88,13 +89,15 @@ export default function DemoSideBar() {
         title: [],
         salary: []
     });
+    const [loading, setLoading] = useState(false)
+    const [jobs, setJobs] = useState([])
+
 
     const handleFilterChange = (filterType, value, isChecked) => {
         setSelectedFilters((prevFilters) => {
             const updatedFilters = { ...prevFilters };
             if (isChecked) {
                 updatedFilters[filterType] = [...updatedFilters[filterType], value];
-                console.log(updatedFilters);
             } else {
                 updatedFilters[filterType] = updatedFilters[filterType].filter((item) => item !== value);
             }
@@ -103,13 +106,57 @@ export default function DemoSideBar() {
     };
 
     const fetchFilteredJobs = async (filters) => {
-        //filter jobs based on selected filters
+        try {
+            setLoading(true)
+            const response = await axios.post(
+                `${import.meta.env.VITE_JOB_API_END_POINT}/get`,
+                { filters, limit: 10 } // Include filters, keyword, and limit in the request body
+            );
+            if (!response.data.success) {
+                setJobs([]);
+            }
+            else {
+                setJobs(response.data.jobs)
+            }
+            console.log(response.data);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false)
+        }
     };
 
 
     useEffect(() => {
-        fetchFilteredJobs(selectedFilters);
+        if (selectedFilters.location.length || selectedFilters.title.length || selectedFilters.salary.length) {
+            fetchFilteredJobs(selectedFilters);
+        }
+
     }, [selectedFilters]);
+
+    useEffect(() => {
+        const fetchAllJobs = async (limit = 6) => {
+            try {
+                setLoading(true)
+                const res = await axios.post(
+                    `${import.meta.env.VITE_JOB_API_END_POINT}/get`,
+                    { params: { limit } } // Pass limit as query parameter
+                );
+                console.log(res);
+
+                if (res.data.success) {
+                    setJobs(res.data.jobs || []); // Ensure it's always an array
+
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false)
+            }
+        };
+        fetchAllJobs()
+    }, [])
+
 
 
     return (
@@ -332,19 +379,32 @@ export default function DemoSideBar() {
                             {/* Product grid */}
                             <div >
                                 <div className=" md:grid md:grid-cols-2 md:grid-rows-3 xl:grid-cols-3 xl:grid-rows-2 gap-4">
-                                    {dummyJobs.map((job, index) => (
-                                        <JobCard
-                                            key={index}  
-                                            title={job.title}
-                                            description={job.description}
-                                            company={job.company}
-                                            location={job.location}
-                                            employmentType={job.employmentType}
-                                            salary={job.salary}
-                                            experience={job.experience}
-                                            positions={job.positions}
-                                        />
-                                    ))}
+                                    {
+                                        loading ? (
+                                            <div>
+                                                loading
+                                            </div>
+                                        ) :
+                                           jobs.length > 0 ?  (jobs.map((job, index) => (
+                                                <JobCard
+                                                    key={index}
+                                                    jobId={job._id}
+                                                    title={job.title}
+                                                    description={job.description}
+                                                    company={job.company.name}
+                                                    location={job.location}
+                                                    employmentType={job.employmentType}
+                                                    salary={job.salary}
+                                                    experience={job.experience}
+                                                    positions={job.positions}
+                                                    logo={job.company.logo}
+                                                />
+                                            ))) : (
+                                                <div>
+                                                    <p className='h1-bold text-center text-dark200_light900'>No jobs found</p>                          
+                                                </div>
+                                            )
+                                    }
                                 </div>
                             </div>
                         </div>

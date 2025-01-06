@@ -67,31 +67,65 @@ export const postJob = async (req, res) => {
 
 //For students
 export const getAllJobs = async (req, res) => {
-    try {
-      const { Keyword = "", limit = 10 } = req.query; // Extract limit and keyword from query params
-      const query = {
-        $or: [
-          { title: { $regex: Keyword, $options: "i" } },
-          { description: { $regex: Keyword, $options: "i" } },
-        ],
-      };
-  
-      // Apply limit and sort
-      const jobs = await Job.find(query)
-        .populate({ path: "company", select: "name logo" })
-        .sort({ createdAt: -1 })
-        .limit(Number(limit)); // Ensure limit is a number
-  
-      if (!jobs.length) {
-        return res.status(404).json({ message: "No jobs found", success: false });
+  try {
+    const { limit = 10, filters } = req.body; // Extract limit and filters from request body
+    console.log("Filters Received:", filters);
+
+    // Base query object
+    const query = {};
+
+    // Apply filters if provided
+    if (filters) {
+      // Apply location filter
+      if (filters.location?.length) {
+        query.location = { $in: filters.location };
       }
-  
-      return res.status(200).json({ jobs, success: true });
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ message: "Internal Server Error", success: false });
+
+      // Apply title filter (use regex for case-insensitive match)
+      if (filters.title?.length) {
+        // Normalize the title input (replace hyphens and other non-alphanumeric characters with spaces)
+        let normalizedTitle = filters.title[0].toLowerCase().replace(/[-]/g, ' ').trim();
+
+        // Split the normalized title into individual words for better matching
+        const words = normalizedTitle.split(/\s+/);
+
+        // Create a regex pattern that looks for each word in the title
+        const regexPatterns = words.map(word => `(?=.*${word})`).join(''); // Each word should appear in the title (in any order)
+
+        // Update the query to match titles containing all the words from the search input
+        query.title = { $regex: regexPatterns, $options: "i" };
+      }
+
+      // Apply salary filter
+      if (filters.salary?.length) {
+        query.salary = { $in: filters.salary };
+      }
     }
-  };
+
+    
+
+    // Apply limit and sort
+    const jobs = await Job.find(query)
+      .populate({ path: "company", select: "name logo" })
+      .sort({ createdAt: -1 })
+      .limit(Number(limit));
+
+    
+
+    if (!jobs.length) {
+      return res.status(200).json({ message: "No jobs found", success: false });
+    }
+
+    return res.status(200).json({ jobs, success: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error", success: false });
+  }
+};
+
+  
+  
+  
   
 //For Students
 export const getjobsById = async (req, res) => {

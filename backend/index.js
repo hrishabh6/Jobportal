@@ -1,24 +1,34 @@
-    import cookieParser from 'cookie-parser';
-    import cors from 'cors';
-    import dotenv from 'dotenv';
-    import connectToDatabase from './utils/db.js';
-    import userRoute from './routes/user.route.js'; // Assuming you have userRoute in routes folder
+import cookieParser from 'cookie-parser';
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import connectToDatabase from './utils/db.js';
+import userRoute from './routes/user.route.js'
+import companyRoute from './routes/company.route.js'
+import jobRoute from './routes/job.route.js'
+import applicationsRoute from './routes/application.route.js'
+import globalsearchRoute from './routes/globalsearch.route.js'
+dotenv.config({})
 
-    dotenv.config();
+const app = express()
 
-    const handler = async (req, res) => {
-    // Initialize necessary middleware for serverless function
-    cookieParser()(req, res, () => {});
-    cors({
-        origin: 'https://jobportal-m9p5.vercel.app/', // Allow frontend URL
-        credentials: true, // Allow cookies
-    })(req, res, () => {});
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser())
 
-    // Make sure the database is connected (optional, based on your db connection)
-    await connectToDatabase();
+app.use(cors({
+    origin: 'https://jobportal-m9p5.vercel.app', // Allow the deployed frontend origin
+    credentials: true, // Allow credentials (cookies, authorization headers)
+}));
 
-    // Handle the request using your existing route handler
-    return userRoute(req, res);
-    };
+const PORT = process.env.PORT || 3000
+app.use('/api/v1/user', userRoute)
+app.use('/api/v1/company', companyRoute)
+app.use('/api/v1/jobs', jobRoute)
+app.use('/api/v1/application', applicationsRoute)
+app.use('/api/v1/globalsearch', globalsearchRoute)
 
-    export default handler;
+app.listen(PORT, () => {
+    connectToDatabase()
+    console.log(`Server is running on port ${PORT}`)
+})

@@ -6,6 +6,7 @@ const ProtectedRoute = ({ element }) => {
   const isUserAuthenticated = isAuthenticated();
 
   if (!isUserAuthenticated) {
+    console.log('User not authenticated');
     return <Navigate to="/login" />;
   }
 

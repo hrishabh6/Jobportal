@@ -6,6 +6,6 @@ import { globalAdminSearch, globalUserSearch } from '../controllers/globalsearch
 const router = express.Router()
 
 router.route('/admin/search').post(isAuthenticated, globalAdminSearch)
-router.route('/search').post(isAuthenticated, globalUserSearch)
+router.route('/search').post( globalUserSearch)
 
 export default router;

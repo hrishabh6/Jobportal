@@ -43,7 +43,7 @@ const filters = [
         id: 'location',
         name: 'Location',
         options: [
-            { value: 'delhi', label: 'Delhi', checked: false },
+            { value: 'Delhi', label: 'Delhi', checked: false },
             { value: 'mumbai', label: 'Mumbai', checked: false },
             { value: 'bangalore', label: 'Bangalore', checked: false },
             { value: 'hyderabad', label: 'Hyderabad', checked: false },

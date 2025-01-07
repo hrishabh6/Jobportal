@@ -99,7 +99,7 @@ export const updateApplicationStatus = async (req, res) => {
 
         const application = await Application.findById(applicationId);
         if (!application) {
-            return res.status(404).json({message: "Application not found", success: false});
+            return res.status(404).json({message: "Application not found", success: false})
         }
 
         application.status = updatedStatus.toLowerCase();

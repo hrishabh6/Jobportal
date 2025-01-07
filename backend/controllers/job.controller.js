@@ -67,64 +67,55 @@ export const postJob = async (req, res) => {
 
 //For students
 export const getAllJobs = async (req, res) => {
-  try {
-    const { limit = 10, filters } = req.body; // Extract limit and filters from request body
-    console.log("Filters Received:", filters);
-
-    // Base query object
-    const query = {};
-
-    // Apply filters if provided
-    if (filters) {
-      // Apply location filter
-      if (filters.location?.length) {
-        query.location = { $in: filters.location };
-      }
-
-      // Apply title filter (use regex for case-insensitive match)
-      if (filters.title?.length) {
-        // Normalize the title input (replace hyphens and other non-alphanumeric characters with spaces)
-        let normalizedTitle = filters.title[0].toLowerCase().replace(/[-]/g, ' ').trim();
-
-        // Split the normalized title into individual words for better matching
-        const words = normalizedTitle.split(/\s+/);
-
-        // Create a regex pattern that looks for each word in the title
-        const regexPatterns = words.map(word => `(?=.*${word})`).join(''); // Each word should appear in the title (in any order)
-
-        // Update the query to match titles containing all the words from the search input
-        query.title = { $regex: regexPatterns, $options: "i" };
-      }
-
-      // Apply salary filter
-      if (filters.salary?.length) {
-        query.salary = { $in: filters.salary };
-      }
-    }
-
-    
-
-    // Apply limit and sort
-    const jobs = await Job.find(query)
-      .populate({ path: "company", select: "name logo" })
-      .sort({ createdAt: -1 })
-      .limit(Number(limit));
-
-    
-
-    if (!jobs.length) {
-      return res.status(200).json({ message: "No jobs found", success: false });
-    }
-
-    return res.status(200).json({ jobs, success: true });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Internal Server Error", success: false });
-  }
-};
-
+    try {
+      const { limit = 10, filters } = req.body; // Extract limit and filters from request body
+      console.log("Filters Received:", filters);
   
+      // Base query object
+      const query = {};
   
+      // Apply filters if provided
+      if (filters) {
+        // Apply location filter with case-insensitive regex for multiple locations
+        if (filters.location?.length) {
+          const locationRegexArray = filters.location.map(location => new RegExp(location, 'i'));
+          query.location = { $in: locationRegexArray };
+        }
+  
+        // Apply title filter with regex for multiple titles
+        if (filters.title?.length) {
+          const titleRegexArray = filters.title.map(title => {
+            // Normalize each title input
+            let normalizedTitle = title.toLowerCase().replace(/[-]/g, ' ').trim();
+            const words = normalizedTitle.split(/\s+/);
+            const regexPattern = words.map(word => `(?=.*${word})`).join('');
+            return new RegExp(regexPattern, 'i'); // Create a regex pattern for each title
+          });
+          query.title = { $in: titleRegexArray };
+        }
+  
+        // Apply salary filter with multiple salary values
+        if (filters.salary?.length) {
+          query.salary = { $in: filters.salary };
+        }
+      }
+  
+      // Apply limit and sort
+      const jobs = await Job.find(query)
+        .populate({ path: "company", select: "name logo" })
+        .sort({ createdAt: -1 })
+        .limit(Number(limit));
+  
+      if (!jobs.length) {
+        return res.status(200).json({ message: "No jobs found", success: false });
+      }
+  
+      return res.status(200).json({ jobs, success: true });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+  };
   
   
 //For Students

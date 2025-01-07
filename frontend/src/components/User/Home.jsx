@@ -20,22 +20,28 @@ const Home = () => {
   const navigate = useNavigate()
   // Fetch all jobs
   const fetchAllJobs = async (limit = 6) => {
-
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_JOB_API_END_POINT}/get`,
-        { params: { limit } } // Pass limit as query parameter
-      );
-      if (res.data.success) {
-        
-        setAllJobs(res.data.jobs || []); // Ensure it's always an array
-      }
+        const res = await axios.post(
+            `${import.meta.env.VITE_JOB_API_END_POINT}/get`,
+            { limit }, // Send limit in the request body
+            {
+                withCredentials: true, // Ensure cookies are sent with the request
+                headers: {
+                    'Content-Type': 'application/json', // Specify JSON content type
+                },
+            }
+        );
+
+        if (res.data.success) {
+            setAllJobs(res.data.jobs || []); // Ensure it's always an array
+        }
     } catch (error) {
-      console.error(error);
+        console.error('Error fetching jobs:', error);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
+
 
   
   useEffect(() => {

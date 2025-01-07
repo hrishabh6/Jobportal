@@ -16,10 +16,14 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 
+app.options('*', cors());
 app.use(cors({
     origin: 'https://jobportal-m9p5.vercel.app', // Allow the deployed frontend origin
     credentials: true, // Allow credentials (cookies, authorization headers)
 }));
+
+
+
 console.log("backend is running")
 app.get('/', (req, res) => {
     res.send('Backend server is running!');

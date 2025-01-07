@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { User } from "../models/user.model.js";
+    import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import { normalizeEmail } from "../utils/constant.js";
 import getDataURI from "../utils/dataURI.js";

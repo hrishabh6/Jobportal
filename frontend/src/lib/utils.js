@@ -41,12 +41,26 @@ export const removeKeysFromQuery = ({
 
 
 const getToken = () => {
-  return Cookies.get('token');  // Get the token from the cookie
+  // Log document.cookie for debugging
+  console.log("Cookies:", document.cookie);
+
+  // Split cookies into an array and find the `token`
+  const tokenCookie = document.cookie.split('; ').find(cookie => cookie.trim().startsWith('token='));
+
+  // If found, extract the value; otherwise, return null
+  return tokenCookie ? tokenCookie.split('=')[1] : null;
 };
 
 export const isAuthenticated = () => {
+  console.log(document.cookie);
+
   const token = getToken();
-  if (!token) return false;
+  
+  if (!token){
+    console.log("No token found");
+    return false
+    
+  }
 
   // Optionally, you can also decode the token to check for expiry or validity
   const decodedToken = JSON.parse(atob(token.split('.')[1]));  // Decode the JWT payload (may need a library)

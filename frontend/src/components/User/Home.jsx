@@ -25,6 +25,7 @@ const Home = () => {
       const res = await axios.post(
         `${import.meta.env.VITE_JOB_API_END_POINT}/get`,
         { params: { limit } } // Pass limit as query parameter
+        
       );
       if (res.data.success) {
         

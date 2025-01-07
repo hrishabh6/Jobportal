@@ -20,7 +20,6 @@ const Home = () => {
   const navigate = useNavigate()
   // Fetch all jobs
   const fetchAllJobs = async (limit = 6) => {
-
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_JOB_API_END_POINT}/get`,
@@ -32,11 +31,12 @@ const Home = () => {
         setAllJobs(res.data.jobs || []); // Ensure it's always an array
       }
     } catch (error) {
-      console.error(error);
+        console.error('Error fetching jobs:', error);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
+
 
   
   useEffect(() => {

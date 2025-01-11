@@ -36,7 +36,7 @@ const Home = () => {
       } catch (error) {
         console.error(error);
       } finally {
-        setLoading(true)
+        setLoading(false)
       }
     };
     fetchAllJobs()

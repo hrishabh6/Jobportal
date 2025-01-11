@@ -17,21 +17,31 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 
 const corsOptions = {
-  origin: (origin, callback) => {
-    // Allow your deployed frontend
-    if (origin === "https://jobportal-gamma-mocha.vercel.app") {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true, // Allow cookies to be sent
+  origin: [
+    "http://localhost:5173",
+    "https://social-graph-sg.vercel.app",
+    "https://social-graph-sg.vercel.app/",
+    "https://social-gram-social-media-app.vercel.app",
+    "https://social-graph-social-media-app.vercel.app/",
+    "https://social-graph-social-media-app-git-main-rishab-jha-projects.vercel.app/",
+    "https://social-graph-social-media-2rlupkxea-rishab-jha-projects.vercel.app/",
+    "https://social-graph-social-media-app.vercel.app",
+    "https://social-graph-social-media-app-git-main-rishab-jha-projects.vercel.app",
+    "https://social-graph-social-media-2rlupkxea-rishab-jha-projects.vercel.app",
+  ], // Add your frontend URLs
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true, // Allow cookies/auth headers
 };
+
+// Use CORS middleware
+
+
+
 
 app.use(cors(corsOptions));
 
   
-  app.use(cors(corsOptions));
 
 const PORT = process.env.PORT || 3000
 app.use('/api/v1/user', userRoute)

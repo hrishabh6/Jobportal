@@ -20,27 +20,27 @@ const Home = () => {
   const navigate = useNavigate()
   // Fetch all jobs
   useEffect(() => {
-          const fetchAllJobs = async (limit = 6) => {
-              try {
-                  setLoading(true)
-                  const res = await axios.post(
-                      `${import.meta.env.VITE_JOB_API_END_POINT}/get`,
-                      { params: { limit } } // Pass limit as query parameter
-                  );
-                  console.log(res);
-  
-                  if (res.data.success) {
-                      setAllJobs(res.data.jobs || []); // Ensure it's always an array
-  
-                  }
-              } catch (error) {
-                  console.error(error);
-              } finally {
-                  setLoading(false)
-              }
-          };
-          fetchAllJobs()
-      }, [])
+    const fetchAllJobs = async (limit = 6) => {
+      try {
+        setLoading(true)
+        const res = await axios.post(
+          `${import.meta.env.VITE_JOB_API_END_POINT}/get`,
+          { params: { limit } } // Pass limit as query parameter
+        );
+        console.log(res);
+
+        if (res.data.success) {
+          setAllJobs(res.data.jobs || []); // Ensure it's always an array
+
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(true)
+      }
+    };
+    fetchAllJobs()
+  }, [])
 
   useEffect(() => {
     console.log(user)
@@ -49,7 +49,7 @@ const Home = () => {
     }
   }, [fetchJobs, user]);
 
-  useEffect(() => { 
+  useEffect(() => {
     if (user && user.role === "recruiter") {
       navigate("/admin/companies")
     }
@@ -60,26 +60,35 @@ const Home = () => {
       <Navbar />
       <HeroSection />
       <MarqueeDemo />
-      <h2 className="h2-semibold text-dark200_light900 text-center mt-9">
-
+      <h2 className="h1-bold mb-2 text-dark200_light900 text-center mt-9">
+        Latest Jobs
       </h2>
-      <div className="hidden md:grid md:grid-cols-2 md:grid-rows-3 xl:grid-cols-3 xl:grid-rows-2 gap-4">
-        {allJobs.map((job, index) => (
-          <JobCard
-            logo={job.company.logo}
-            jobId={job._id}
-            key={index} 
-            title={job.title}
-            description={job.description}
-            company={job.company.name}
-            location={job.location}
-            employmentType={job.employmentType}
-            salary={job.salary}
-            experience={job.experience}
-            positions={job.positions}
-          />
-        ))}
-      </div>
+      {loading ? <>
+        <div className="loader mx-auto mt-10 mb-10">
+          <div className="box1 dark:border-[#f5f5f5]"></div>
+          <div className="box2 dark:border-[#f5f5f5]"></div>
+          <div className="box3 dark:border-[#f5f5f5]"></div>
+        </div>
+      </> :
+        <div className="hidden md:grid md:grid-cols-2 md:grid-rows-3 xl:grid-cols-3 xl:grid-rows-2 gap-4">
+          {allJobs.map((job, index) => (
+            <JobCard
+              logo={job.company.logo}
+              jobId={job._id}
+              key={index}
+              title={job.title}
+              description={job.description}
+              company={job.company.name}
+              location={job.location}
+              employmentType={job.employmentType}
+              salary={job.salary}
+              experience={job.experience}
+              positions={job.positions}
+            />
+          ))}
+        </div>
+
+      }
       <div className="md:hidden text-dark-100">
         <h2 className="h2-semibold text-dark200_light900 text-center mt-9">
           Latest Jobs

@@ -1,5 +1,4 @@
 import { setAllJobs } from "@/redux/jobSlice";
-import axios from "axios";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -10,13 +9,19 @@ const useGetAllAppliedJobs = () => {
   // Function to fetch jobs
   const fetchJobs = useCallback(async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_APPLICATION_API_END_POINT}/get`, {
-        withCredentials: true,
+      const res = await fetch(`${import.meta.env.VITE_APPLICATION_API_END_POINT}/get`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        credentials: "include", // Ensure credentials are sent
       });
-      
-      if (res.data.success) {
 
-        dispatch(setAllJobs(res.data.application));
+      // Parse the response body
+      const data = await res.json(); // This is where the body gets parsed to JSON
+
+      if (data.success) {
+        dispatch(setAllJobs(data.application));  // Make sure 'data.application' is the right response field
       }
     } catch (error) {
       console.error("Error fetching applied jobs:", error);
@@ -25,5 +30,6 @@ const useGetAllAppliedJobs = () => {
 
   return { fetchJobs, jobs }; // Return fetch function and jobs
 };
+
 
 export default useGetAllAppliedJobs;

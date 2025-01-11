@@ -16,7 +16,8 @@ import EditCompany from "./components/admin/EditCompany";
 import CreateJob from "./components/admin/CreateJob";
 import AdminJobs from "./components/admin/AdminJobs";
 import JobPage from "./components/admin/JobPage";
-import ProtectedRoute from "./components/protectedRoute";
+import ProtectedRouteAdmin from "./components/admin/ProtectedRouteAdmin";
+import ProtectedRouteUser from "./components/User/ProtectedRouteUser";
 
 const appRouter = createBrowserRouter([
   {
@@ -45,11 +46,11 @@ const appRouter = createBrowserRouter([
   },
   {
     path: "/profile",
-    element: <ProtectedRoute element={<Profile />} />,
+    element: <ProtectedRouteUser element={<Profile />} />,
   },
   {
     path: "/profile/edit",
-    element: <ProtectedRoute element={<UpdateProfile />} />,
+    element: <ProtectedRouteUser element={<UpdateProfile />} />,
   },
   {
     path: "/admin/companies",
@@ -57,27 +58,27 @@ const appRouter = createBrowserRouter([
   },
   {
     path: "/admin/jobs",
-    element: <ProtectedRoute element={<AdminJobs />} />,
+    element: <ProtectedRouteAdmin element={<AdminJobs />} />,
   },
   {
     path: "/admin/companies/create",
-    element: <ProtectedRoute element={<CreateCompany />} />,
+    element: <ProtectedRouteAdmin element={<CreateCompany />} />,
   },
   {
     path: "/admin/companies/:id",
-    element: <ProtectedRoute element={<CompanyPage />} />,
+    element: <ProtectedRouteAdmin element={<CompanyPage />} />,
   },
   {
     path: "/admin/companies/:id/edit",
-    element: <ProtectedRoute element={<EditCompany />} />,
+    element: <ProtectedRouteAdmin element={<EditCompany />} />,
   },
   {
     path: "/admin/company/:id/jobs/create",
-    element: <ProtectedRoute element={<CreateJob />} />,
+    element: <ProtectedRouteAdmin element={<CreateJob />} />,
   },
   {
     path: "/admin/jobpage/:id",
-    element: <ProtectedRoute element={<JobPage />} />,
+    element: <ProtectedRouteAdmin element={<JobPage />} />,
   },
 ]);
 

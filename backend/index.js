@@ -16,7 +16,14 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 
-app.use(cors());
+const corsOptions = {
+    origin: (origin, callback) => {
+      callback(null, true); // Allow all origins (adjust if needed)
+    },
+    credentials: true,  // Allow cookies and other credentials
+  };
+  
+  app.use(cors(corsOptions));
 
 const PORT = process.env.PORT || 3000
 app.use('/api/v1/user', userRoute)

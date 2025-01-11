@@ -123,6 +123,7 @@ export const login = async (req, res) => {
                 maxAge: 7 * 24 * 60 * 60 * 1000,
                 httpOnly: true,
                 sameSite: "None",
+                secure: true, 
                 // secure: true, // Uncomment for production with HTTPS
             })
             .json({ message: "Logged in successfully", success: true, user });

@@ -7,7 +7,6 @@ const isAuthenticated = async (req, res, next) => {
         const accessToken = req.cookies.token;
         const refreshTokenFromCookie = req.cookies.refreshToken; // assuming it's stored as 'refreshToken'
 
-
         if (!accessToken) {
             return res.status(401).json({
                 message: "Access token is missing.",

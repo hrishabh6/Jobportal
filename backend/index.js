@@ -17,11 +17,19 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 
 const corsOptions = {
-    origin: (origin, callback) => {
-      callback(null, true); // Allow all origins (adjust if needed)
-    },
-    credentials: true,  // Allow cookies and other credentials
-  };
+  origin: (origin, callback) => {
+    // Allow your deployed frontend
+    if (origin === "https://jobportal-gamma-mocha.vercel.app") {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true, // Allow cookies to be sent
+};
+
+app.use(cors(corsOptions));
+
   
   app.use(cors(corsOptions));
 

@@ -17,66 +17,11 @@ import { XMarkIcon } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from '@heroicons/react/20/solid'
 import JobCard from './JobCard'
 import axios from 'axios'
+import { filters } from '@/lib'
+import { sortOptions } from '@/lib'
 
-
-const sortOptions = [
-    { name: 'Newest', href: '#', current: false },
-    { name: 'Highest Salary', href: '#', current: false },
-    { name: 'Lowest Salary', href: '#', current: false },
-    { name: 'Most Applications', href: '#', current: false },
-];
-
-
-const filters = [
-    {
-        id: 'salary',
-        name: 'Salary',
-        options: [
-            { value: '0-20000', label: '0 - 20,000', checked: false },
-            { value: '20001-40000', label: '20,001 - 40,000', checked: false },
-            { value: '40001-60000', label: '40,001 - 60,000', checked: false },
-            { value: '60001-80000', label: '60,001 - 80,000', checked: false },
-            { value: '80001+', label: '80,001+', checked: false },
-        ],
-    },
-    {
-        id: 'location',
-        name: 'Location',
-        options: [
-            { value: 'Delhi', label: 'Delhi', checked: false },
-            { value: 'mumbai', label: 'Mumbai', checked: false },
-            { value: 'bangalore', label: 'Bangalore', checked: false },
-            { value: 'hyderabad', label: 'Hyderabad', checked: false },
-            { value: 'chennai', label: 'Chennai', checked: false },
-            { value: 'kolkata', label: 'Kolkata', checked: false },
-            { value: 'pune', label: 'Pune', checked: false },
-            { value: 'ahmedabad', label: 'Ahmedabad', checked: false },
-            { value: 'jaipur', label: 'Jaipur', checked: false },
-            { value: 'lucknow', label: 'Lucknow', checked: false },
-        ],
-    },
-    {
-        id: 'title',
-        name: 'Job Title',
-        options: [
-            { value: 'developer', label: 'Software Developer', checked: false },
-            { value: 'data-analyst', label: 'Data Analyst', checked: false },
-            { value: 'project-manager', label: 'Project Manager', checked: false },
-            { value: 'ui/ux', label: 'UI/UX Designer', checked: false },
-            { value: 'digital-marketer', label: 'Digital Marketer', checked: false },
-            { value: 'content-writer', label: 'Content Writer', checked: false },
-            { value: 'sales-executive', label: 'Sales Executive', checked: false },
-            { value: 'human-resources', label: 'Human Resources (HR)', checked: false },
-            { value: 'accountant', label: 'Accountant', checked: false },
-            { value: 'civil-engineer', label: 'Civil Engineer', checked: false },
-            { value: 'mechanical-engineer', label: 'Mechanical Engineer', checked: false },
-            { value: 'teacher', label: 'Teacher', checked: false },
-            { value: 'nurse', label: 'Nurse', checked: false },
-            { value: 'electrician', label: 'Electrician', checked: false },
-            { value: 'driver', label: 'Driver', checked: false },
-        ],
-    },
-]
+import PaginationComponent from './Pagination'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -91,6 +36,49 @@ export default function DemoSideBar() {
     });
     const [loading, setLoading] = useState(false)
     const [jobs, setJobs] = useState([])
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
+    const location = useLocation(); // For accessing the URL parameters
+    const navigate = useNavigate(); // For navigating to updated URLs
+    useEffect(() => {
+        const fetchAllJobs = async (limit = 10) => {
+            try {
+                setLoading(true); // Set loading to true when fetching
+                const res = await axios.post(
+                    `${import.meta.env.VITE_JOB_API_END_POINT}/get`,
+                    { limit, currentPage } // Send currentPage in the request body
+                );
+                console.log(res);
+
+                if (res.data.success) {
+                    setJobs(res.data.jobs || []); // Update jobs list
+                    setTotalPages(res.data.totalPages); // Update totalPages
+                }
+            } catch (error) {
+                console.error("Error fetching jobs:", error);
+            } finally {
+                setLoading(false); // Set loading to false after the fetch
+            }
+        };
+
+        fetchAllJobs(); // Fetch jobs when currentPage changes
+    }, [currentPage]); // Dependency on currentPage ensures effect runs when page changes
+
+    // Update the URL with the new page number when navigating between pages
+    const goToPage = (page) => {
+        if (page > 0 && page <= totalPages) {
+            setCurrentPage(page); // Update currentPage on page change
+            // Update URL query parameters to reflect current page
+            const searchParams = new URLSearchParams(location.search);
+            searchParams.set("page", page);
+            navigate(`${location.pathname}?${searchParams.toString()}`);
+        }
+    };
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const pageFromUrl = parseInt(queryParams.get("page")) || 1; // Default to 1 if no page in URL
+        setCurrentPage(pageFromUrl); // Set the currentPage from URL
+    }, [location.search]); // Run this effect whenever the URL changes
 
 
     const handleFilterChange = (filterType, value, isChecked) => {
@@ -114,11 +102,15 @@ export default function DemoSideBar() {
             );
             if (!response.data.success) {
                 setJobs([]);
+
             }
             else {
                 setJobs(response.data.jobs)
+                setTotalPages(response.data.totalPages)
+
             }
             console.log(response.data);
+            console.log(response.data.totalPages, "These are total pages");
         } catch (error) {
             console.error(error);
         } finally {
@@ -134,28 +126,6 @@ export default function DemoSideBar() {
 
     }, [selectedFilters]);
 
-    useEffect(() => {
-        const fetchAllJobs = async (limit = 6) => {
-            try {
-                setLoading(true)
-                const res = await axios.post(
-                    `${import.meta.env.VITE_JOB_API_END_POINT}/get`,
-                    { params: { limit } } // Pass limit as query parameter
-                );
-                console.log(res);
-
-                if (res.data.success) {
-                    setJobs(res.data.jobs || []); // Ensure it's always an array
-
-                }
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setLoading(false)
-            }
-        };
-        fetchAllJobs()
-    }, [])
 
 
 
@@ -385,7 +355,7 @@ export default function DemoSideBar() {
                                                 loading
                                             </div>
                                         ) :
-                                           jobs.length > 0 ?  (jobs.map((job, index) => (
+                                            jobs.length > 0 ? (jobs.map((job, index) => (
                                                 <JobCard
                                                     key={index}
                                                     jobId={job._id}
@@ -401,10 +371,13 @@ export default function DemoSideBar() {
                                                 />
                                             ))) : (
                                                 <div>
-                                                    <p className='h1-bold text-center text-dark200_light900'>No jobs found</p>                          
+                                                    <p className='h1-bold text-center text-dark200_light900'>No jobs found</p>
                                                 </div>
                                             )
                                     }
+                                </div>
+                                <div className='mt-4'>
+                                    <PaginationComponent totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
                                 </div>
                             </div>
                         </div>

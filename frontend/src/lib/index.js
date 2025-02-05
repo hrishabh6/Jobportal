@@ -152,3 +152,60 @@ export const GlobalSearchAdminFilter = [
   { name: "Job", value: "job" }
 ];
 
+export const filters = [
+    {
+        id: 'salary',
+        name: 'Salary',
+        options: [
+            { value: '0-20000', label: '0 - 20,000', checked: false },
+            { value: '20001-40000', label: '20,001 - 40,000', checked: false },
+            { value: '40001-60000', label: '40,001 - 60,000', checked: false },
+            { value: '60001-80000', label: '60,001 - 80,000', checked: false },
+            { value: '80001+', label: '80,001+', checked: false },
+        ],
+    },
+    {
+        id: 'location',
+        name: 'Location',
+        options: [
+            { value: 'Delhi', label: 'Delhi', checked: false },
+            { value: 'mumbai', label: 'Mumbai', checked: false },
+            { value: 'bangalore', label: 'Bangalore', checked: false },
+            { value: 'hyderabad', label: 'Hyderabad', checked: false },
+            { value: 'chennai', label: 'Chennai', checked: false },
+            { value: 'kolkata', label: 'Kolkata', checked: false },
+            { value: 'pune', label: 'Pune', checked: false },
+            { value: 'ahmedabad', label: 'Ahmedabad', checked: false },
+            { value: 'jaipur', label: 'Jaipur', checked: false },
+            { value: 'lucknow', label: 'Lucknow', checked: false },
+        ],
+    },
+    {
+        id: 'title',
+        name: 'Job Title',
+        options: [
+            { value: 'developer', label: 'Software Developer', checked: false },
+            { value: 'data-analyst', label: 'Data Analyst', checked: false },
+            { value: 'project-manager', label: 'Project Manager', checked: false },
+            { value: 'ui/ux', label: 'UI/UX Designer', checked: false },
+            { value: 'digital-marketer', label: 'Digital Marketer', checked: false },
+            { value: 'content-writer', label: 'Content Writer', checked: false },
+            { value: 'sales-executive', label: 'Sales Executive', checked: false },
+            { value: 'human-resources', label: 'Human Resources (HR)', checked: false },
+            { value: 'accountant', label: 'Accountant', checked: false },
+            { value: 'civil-engineer', label: 'Civil Engineer', checked: false },
+            { value: 'mechanical-engineer', label: 'Mechanical Engineer', checked: false },
+            { value: 'teacher', label: 'Teacher', checked: false },
+            { value: 'nurse', label: 'Nurse', checked: false },
+            { value: 'electrician', label: 'Electrician', checked: false },
+            { value: 'driver', label: 'Driver', checked: false },
+        ],
+    },
+]
+
+export const sortOptions = [
+  { name: 'Newest', href: '#', current: false },
+  { name: 'Highest Salary', href: '#', current: false },
+  { name: 'Lowest Salary', href: '#', current: false },
+  { name: 'Most Applications', href: '#', current: false },
+];

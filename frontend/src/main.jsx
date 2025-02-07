@@ -7,7 +7,7 @@ import { Provider } from 'react-redux'
 import store from './redux/store'
 import { persistStore } from 'redux-persist'
 import { PersistGate } from 'redux-persist/integration/react'
-import { Analytics } from '@vercel/analytics/next';
+import { Analytics } from '@vercel/analytics/react';
 
 const persistor = persistStore(store)
 

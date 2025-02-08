@@ -4,12 +4,44 @@ import bcrypt from "bcryptjs";
 import { normalizeEmail } from "../utils/constant.js";
 import getDataURI from "../utils/dataURI.js";
 import cloudinary from "../utils/Cloudinary.js";
+import dotenv from "dotenv";
+import axios from "axios";
+
+dotenv.config();
+
 
 export const register = async (req, res) => {
     try {
-        const { fullName, email, phoneNumber, password, role, username } = req.body;
+        const { fullName, email, phoneNumber, password, role, username, captchaToken } = req.body;
+        
+        if(captchaToken){
+            console.log("captcha token is here")
+        }
+        
+        console.log(fullName, email, phoneNumber, password, role, username)
         const profile = req.file
         let pfpUri = null
+
+
+        const googleVerifyURL = "https://www.google.com/recaptcha/api/siteverify";
+        const secretKey = process.env.GOOGLE_SECRET_KEY;
+
+        const  response  = await axios.post(googleVerifyURL, null, {
+            params: {
+                secret: secretKey,
+                response: captchaToken,
+            },
+        });
+
+        if (!response.data.success) {
+            console.error("Errors:", response.data["error-codes"]);
+            return res.status(400).json({ message: "reCAPTCHA verification failed" });
+        }
+
+        if(!fullName || !email || !phoneNumber || !password || !role || !username){
+            return res.status(400).json({ message: "Something is missing", success: false });
+        }
+
         try {
             if (profile) {
                 pfpUri = getDataURI(profile);
@@ -23,10 +55,7 @@ export const register = async (req, res) => {
             pfpcloudResponse = await cloudinary.uploader.upload(pfpUri);
         }
 
-        // Check if any required field is missing
-        if (!fullName || !email || !phoneNumber || !password || !role || !username) {
-            return res.status(400).json({ message: "Something is missing", success: false });
-        }
+        
 
         // Check if the email already exists in the database
         const userByEmail = await User.findOne({ email });
@@ -115,7 +144,7 @@ export const login = async (req, res) => {
             updatedAt: user.updatedAt
         }
 
-        const token =  jwt.sign(tokenData, process.env.JWT_SECRET, { expiresIn: "7d" });
+        const token = jwt.sign(tokenData, process.env.JWT_SECRET, { expiresIn: "7d" });
 
         return res
             .status(200)
@@ -123,7 +152,7 @@ export const login = async (req, res) => {
                 maxAge: 7 * 24 * 60 * 60 * 1000,
                 httpOnly: true,
                 sameSite: "None",
-                secure: true, 
+                secure: true,
                 // secure: true, // Uncomment for production with HTTPS
             })
             .json({ message: "Logged in successfully", success: true, user });
@@ -181,7 +210,7 @@ export const updateProfile = async (req, res) => {
 
         if (resumeUri) {
             resumecloudResponse = await cloudinary.uploader.upload(resumeUri, {
-                
+
             });
         }
 

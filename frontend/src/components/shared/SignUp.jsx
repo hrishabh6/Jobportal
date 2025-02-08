@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "@/redux/authSlice";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
+import Recaptcha from "../captcha/Recaptcha";
 
 
 const SignUp = () => {
@@ -21,6 +22,7 @@ const SignUp = () => {
     role: "student",
     profile: null,
   });
+  const [captchaToken, setCaptchaToken] = useState("null");
   const { loading } = useSelector(store => store.auth)
   const dispatch = useDispatch();
   const handleEventChange = (event) => {
@@ -49,6 +51,7 @@ const SignUp = () => {
     formData.append("phoneNumber", input.phoneNumber);
     formData.append("password", input.password);
     formData.append("role", input.role);
+    formData.append("captchaToken", captchaToken);
     if (input.profile) {
       formData.append("profile", input.profile);
     }
@@ -56,13 +59,14 @@ const SignUp = () => {
 
     try {
       dispatch(setLoading(true));
+      
       const res = await axios.post(`${import.meta.env.VITE_USER_API_END_POINT}/register`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
         withCredentials: true,
       });
-      console.log("Response:", res.data);
+      console.log("Response:", res.data);      
       if (res.data.success) {
         navigateTo("/login");
         toast.success(res.data.message);
@@ -208,7 +212,7 @@ const SignUp = () => {
             </div>
           </div>
         </div>
-
+          <Recaptcha action="login" onVerify={setCaptchaToken} />
         {/* Submit Button */}
         {
           loading ? <Button className="w-1/3 mx-auto primary-gradient text-white py-2 px-4 rounded-lg"> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> </Button>

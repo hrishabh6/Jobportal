@@ -8,11 +8,13 @@ import companyRoute from './routes/company.route.js'
 import jobRoute from './routes/job.route.js'
 import applicationsRoute from './routes/application.route.js'
 import globalsearchRoute from './routes/globalsearch.route.js'
+import rateLimiterMiddleware from './redis/ratelimit.js';
 dotenv.config({})
 
 const app = express()
 
 app.use(express.json())
+// app.use(rateLimiterMiddleware);
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 

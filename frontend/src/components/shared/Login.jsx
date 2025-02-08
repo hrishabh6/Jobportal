@@ -2,18 +2,21 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import Navbar from "./Navbar";
 import { Link, useNavigate } from "react-router-dom";
-import {  useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setUser } from "@/redux/authSlice";
 import { Button } from "../ui/button";
-import {  Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import useGetAllAppliedJobs from "@/hooks/getAllAppliedJobs";
+import Recaptcha from "../captcha/Recaptcha";
+
 
 const Login = () => {
   const { fetchJobs } = useGetAllAppliedJobs(); // Get fetchJobs function from hook
-  
+  const [captchaToken, setCaptchaToken] = useState("");
+
   const [input, setInput] = useState({
     email: "",
     password: "",
@@ -27,17 +30,22 @@ const Login = () => {
   };
 
 
+
   const onSubmit = async (e) => {
     e.preventDefault();
 
     try {
       dispatch(setLoading(true));
-      const res = await axios.post(`${import.meta.env.VITE_USER_API_END_POINT}/login`, input, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,  
-      });
+      console.log("this is the captcha token", captchaToken);
+      const res = await axios.post(
+        `${import.meta.env.VITE_USER_API_END_POINT}/login`,
+        { ...input, captchaToken },  // Include captchaToken inside the request body
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        })
       console.log("Response:", res.data);
       if (res.data.success) {
         dispatch(setUser(res.data.user));
@@ -53,7 +61,7 @@ const Login = () => {
     }
   };
 
-  
+
 
 
   return (
@@ -127,7 +135,9 @@ const Login = () => {
 
         {/* Submit Button */}
         {
-          loading ? <Button className="w-1/3 mx-auto primary-gradient text-white py-2 px-4 rounded-lg"> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> </Button>
+          loading ? <Button className="w-1/3 mx-auto primary-gradient text-white py-2 px-4 rounded-lg">
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          </Button>
             : <Button
               type="submit"
               className="w-1/3 mx-auto primary-gradient text-white py-2 px-4 rounded-lg"
@@ -136,7 +146,7 @@ const Login = () => {
             </Button>
 
         }
-
+        <Recaptcha action="login" onVerify={setCaptchaToken} />
         <p>
           Don &apos;t have an account?{" "}
           <Link to={`/signup`} className="text-light400_light500">Sign-Up</Link>

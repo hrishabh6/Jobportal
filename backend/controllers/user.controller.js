@@ -9,24 +9,16 @@ import axios from "axios";
 
 dotenv.config();
 
+const verifyCaptcha = async (captchaToken) => {
+    if (!captchaToken) {
+        throw new Error('Captcha token is missing');
+    }
 
-export const register = async (req, res) => {
+    const googleVerifyURL = "https://www.google.com/recaptcha/api/siteverify";
+    const secretKey = process.env.GOOGLE_SECRET_KEY;
+
     try {
-        const { fullName, email, phoneNumber, password, role, username, captchaToken } = req.body;
-        
-        if(captchaToken){
-            console.log("captcha token is here")
-        }
-        
-        console.log(fullName, email, phoneNumber, password, role, username)
-        const profile = req.file
-        let pfpUri = null
-
-
-        const googleVerifyURL = "https://www.google.com/recaptcha/api/siteverify";
-        const secretKey = process.env.GOOGLE_SECRET_KEY;
-
-        const  response  = await axios.post(googleVerifyURL, null, {
+        const response = await axios.post(googleVerifyURL, null, {
             params: {
                 secret: secretKey,
                 response: captchaToken,
@@ -34,134 +26,156 @@ export const register = async (req, res) => {
         });
 
         if (!response.data.success) {
-            console.error("Errors:", response.data["error-codes"]);
-            return res.status(400).json({ message: "reCAPTCHA verification failed" });
+            console.error("Captcha Errors:", response.data["error-codes"]);
+            throw new Error('reCAPTCHA verification failed');
         }
 
-        if(!fullName || !email || !phoneNumber || !password || !role || !username){
-            return res.status(400).json({ message: "Something is missing", success: false });
+        return true;
+    } catch (error) {
+        console.error('Captcha verification error:', error);
+        throw new Error('reCAPTCHA verification failed');
+    }
+};
+
+// Helper function to generate JWT token
+const generateToken = (userId) => {
+    return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
+};
+
+// Helper function to format user response
+const formatUserResponse = (user) => {
+    return {
+        fullName: user.name,
+        username: user.username,
+        _id: user._id,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        profile: user.profile,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+    };
+};
+
+export const login = async (email, password, role, captchaToken) => {
+    try {
+        // Validate required fields
+        if (!email || !password || !role) {
+            throw new Error('Required fields are missing');
         }
 
-        try {
-            if (profile) {
-                pfpUri = getDataURI(profile);
-            }
-        } catch (err) {
-            console.error('Error generating DataURI for profile picture:', err.message);
-        }
-        let pfpcloudResponse = null
-
-        if (pfpUri) {
-            pfpcloudResponse = await cloudinary.uploader.upload(pfpUri);
+        // Only verify captcha if token is provided (skip for auto-login after registration)
+        if (captchaToken) {
+            await verifyCaptcha(captchaToken);
         }
 
-        
+        // Find and validate user
+        const user = await User.findOne({ email });
+        if (!user) {
+            throw new Error('Incorrect credentials');
+        }
 
-        // Check if the email already exists in the database
-        const userByEmail = await User.findOne({ email });
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            throw new Error('Incorrect credentials');
+        }
+
+        if (role !== user.role) {
+            throw new Error('Account does not exist with current role');
+        }
+
+        // Generate token and format user response
+        const token = generateToken(user._id);
+        const formattedUser = formatUserResponse(user);
+
+        return {
+            success: true,
+            message: 'Logged in successfully',
+            user: formattedUser,
+            token,
+        };
+    } catch (error) {
+        console.error('Login error:', error);
+        return {
+            success: false,
+            message: error.message || 'An error occurred during login',
+        };
+    }
+};
+
+export const register = async (req, res) => {
+    try {
+        const { fullName, email, phoneNumber, password, role, username, captchaToken } = req.body;
+
+        // Validate required fields
+        if (!fullName || !email || !phoneNumber || !password || !role || !username) {
+            return res.status(400).json({
+                success: false,
+                message: 'Required fields are missing',
+            });
+        }
+
+        // Verify captcha
+        await verifyCaptcha(captchaToken);
+
+        // Check for existing user
+        const [userByEmail, userByUsername] = await Promise.all([
+            User.findOne({ email }),
+            User.findOne({ username }),
+        ]);
+
         if (userByEmail) {
-            return res.status(400).json({ message: "User already exists with this email", success: false });
+            return res.status(400).json({
+                success: false,
+                message: 'User already exists with this email',
+            });
         }
 
-        // Check if the username already exists in the database
-        const userByUsername = await User.findOne({ username });
         if (userByUsername) {
-            return res.status(400).json({ message: "Username is already taken", success: false });
+            return res.status(400).json({
+                success: false,
+                message: 'Username is already taken',
+            });
         }
 
-        // Normalize the email (if needed)
-        const normalizedEmail = normalizeEmail(email);
-
-        // Hash the password
+        // Hash password and create user
         const hashedPassword = await bcrypt.hash(password, 10);
-
-        let profilePicture = null
-
-        if (pfpcloudResponse) {
-            profilePicture = pfpcloudResponse.secure_url
-        }
-
-        // Create the new user
-        await User.create({
+        const newUser = await User.create({
             name: fullName,
-            email: normalizedEmail,
+            email,
             phoneNumber,
             password: hashedPassword,
             role,
-            username, // Storing the username
+            username,
             profile: {
-                profilePhoto: profilePicture
-            }
+                profilePhoto: null,
+            },
         });
 
-        return res.status(201).json({ message: "Account registered successfully", success: true });
+        // Auto-login after successful registration (skip captcha verification)
+        const loginResponse = await login(email, password, role);
+
+        if (!loginResponse.success) {
+            throw new Error('Auto-login failed after registration');
+        }
+
+        return res.status(201).json({
+            success: true,
+            message: 'Account registered and logged in successfully',
+            user: loginResponse.user,
+            token: loginResponse.token,
+        });
 
     } catch (error) {
-        console.log(error);
+        console.error('Registration error:', error);
         return res.status(500).json({
-            message: "An error occurred during registration. Please try again later.",
             success: false,
+            message: error.message || 'An error occurred during registration',
         });
     }
 };
 
 
-export const login = async (req, res) => {
-    try {
-        const { email, password, role } = req.body;
-        if (!email || !password || !role) {
-            return res.status(400).json({ message: "Something is missing", success: false });
-        }
-        let user = await User.findOne({ email })
-        if (!user) {
-            return res.status(400).json({ message: "Incorrect Credentials", success: false });
-        }
-
-        const isPassword = await bcrypt.compare(password, user.password);
-
-        if (!isPassword) {
-            return res.status(400).json({ message: "Incorrect Credentials", success: false });
-        }
-
-        if (role !== user.role) {
-            return res.status(400).json({ message: "Account does not exist with current role", success: false });
-
-        }
-
-        const tokenData = {
-            userId: user._id,
-        }
-
-        user = {
-            fullName: user.name,
-            username: user.username,
-            _id: user._id,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            role: user.role,
-            profile: user.profile,
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt
-        }
-
-        const token = jwt.sign(tokenData, process.env.JWT_SECRET, { expiresIn: "7d" });
-
-        return res
-            .status(200)
-            .cookie("token", token, {
-                maxAge: 7 * 24 * 60 * 60 * 1000,
-                httpOnly: true,
-                sameSite: "None",
-                secure: true,
-                // secure: true, // Uncomment for production with HTTPS
-            })
-            .json({ message: "Logged in successfully", success: true, user });
-
-    } catch (error) {
-        console.log(error);
-        throw error
-    }
-}
 
 export const logout = async (req, res) => {
     try {

@@ -6,7 +6,7 @@ import { useRef, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
-import { setLoading } from "@/redux/authSlice";
+import { setLoading, setUser } from "@/redux/authSlice";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
 import Recaptcha from "../captcha/Recaptcha";
@@ -31,7 +31,7 @@ const SignUp = () => {
   const fileInputRef = useRef(null);
   const handleButtonClick = () => {
     fileInputRef.current.click(); // Trigger the file input click
-};
+  };
 
   const handleFileChange = (event) => {
     const file = event.target.files?.[0]; // Get the selected file
@@ -41,7 +41,6 @@ const SignUp = () => {
   };
 
   const navigateTo = useNavigate();
-
   const onSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -58,22 +57,43 @@ const SignUp = () => {
     console.log([...formData.entries()]); // Log FormData to verify it's correctly appended
 
     try {
+      if (window.refreshRecaptcha) {
+        const newToken = await window.refreshRecaptcha();
+        if (newToken) {
+          setCaptchaToken(newToken);
+        }
+      }
+
+      // Validate captcha token
+      if (!captchaToken || captchaToken === "null") {
+        toast.error("Please wait while we verify your request");
+        return;
+      }
       dispatch(setLoading(true));
-      
       const res = await axios.post(`${import.meta.env.VITE_USER_API_END_POINT}/register`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
         withCredentials: true,
       });
-      console.log("Response:", res.data);      
+      console.log("Response:", res.data);
       if (res.data.success) {
-        navigateTo("/login");
+        console.log("User:", res.data);
+        dispatch(setUser(res.data.user));
+        navigateTo("/");
         toast.success(res.data.message);
       }
     } catch (error) {
       console.error("Error during API call:", error);
-      toast.error(error.response.data.message);
+      const errorMessage = error.response?.data?.message || "Registration failed. Please try again.";
+      toast.error(errorMessage);
+
+      // If error is due to captcha, refresh it
+      if (errorMessage.toLowerCase().includes('captcha')) {
+        if (window.refreshRecaptcha) {
+          await window.refreshRecaptcha();
+        }
+      }
     } finally {
       dispatch(setLoading(false));
     }
@@ -212,7 +232,7 @@ const SignUp = () => {
             </div>
           </div>
         </div>
-          <Recaptcha action="login" onVerify={setCaptchaToken} />
+        <Recaptcha action="login" onVerify={setCaptchaToken} />
         {/* Submit Button */}
         {
           loading ? <Button className="w-1/3 mx-auto primary-gradient text-white py-2 px-4 rounded-lg"> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> </Button>

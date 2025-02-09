@@ -90,9 +90,7 @@ const Home = () => {
 
       }
       <div className="md:hidden text-dark-100">
-        <h2 className="h2-semibold text-dark200_light900 text-center mt-9">
-          Latest Jobs
-        </h2>
+        
         {loading ? (
           <p>Loading jobs...</p>
         ) : allJobs.length > 0 ? (

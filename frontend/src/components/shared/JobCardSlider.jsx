@@ -14,7 +14,7 @@ import React from 'react';
 
 export default function JobCardSlider({ children }) {
   return (
-    <div className="flex mt-8">
+    <div className="flex">
       <Swiper
         pagination={{
           dynamicBullets: true,
@@ -24,7 +24,7 @@ export default function JobCardSlider({ children }) {
       >
         {React.Children.map(children, (child, index) => (
           <SwiperSlide key={index} className="mb-9">
-            <div className="swiper-slide-content text-dark200_light900 text-center mt-9 flex items-center justify-center h-fit rounded-lg">
+            <div className="swiper-slide-content text-dark200_light900 text-center  flex items-center justify-center h-fit rounded-lg">
               {child}
             </div>
           </SwiperSlide>

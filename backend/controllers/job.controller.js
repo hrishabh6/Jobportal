@@ -204,3 +204,15 @@ export const jobStatus = async (req, res) => {
         return res.status(500).json({message: "Internal Server Error", success: false});
     }
 }
+
+export const jobTitles = async (req, res) => {
+    try {
+        const titles = await Job.find().distinct("title"); // Get distinct titles
+        const limitedTitles = titles.slice(0, 10); // Limit to 10 titles
+
+        return res.status(200).json({ titles: limitedTitles, success: true });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+};

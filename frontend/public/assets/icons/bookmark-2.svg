@@ -1,0 +1,9 @@
+<svg
+    viewBox="0 0 16 16"
+    data-supported-dps="16x16"
+    fill="currentColor"
+    className="icon"
+    {...props}
+  >
+    <path d="M11 10.51l-3-2.7-3 2.7V3h5a1 1 0 011 1zM3 1v14l5-4.5 5 4.5V4a3 3 0 00-3-3z" />
+  </svg>

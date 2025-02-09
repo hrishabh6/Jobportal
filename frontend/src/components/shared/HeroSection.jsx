@@ -15,6 +15,12 @@ const HeroSection = () => {
     return (
         <>
             <div className="mt-9">
+                <div className="max-md:px-4">
+                    <div className="w-1/2 max-md:w-full md:w-3/4 xl:w-1/2 mx-auto  mb-5 background-light700_dark400 relative flex min-h-[56px] grow items-center gap-1 rounded-xl px-4">
+                        <GlobalSearch type={"user-global-search"} />
+                    </div>
+
+                </div>
                 <div className="flex justify-center flex-col items-center">
                     <div className="flex max-sm:flex-col">
                         <div className=" mx-8 max-sm:mx-2 flex flex-col items-center justify-center">
@@ -26,10 +32,7 @@ const HeroSection = () => {
                             </div>
                             <p className=" text-dark200_light900 text-center mt-9 text-3xl ">The Worlds leading Platform for career opportunities</p>
                         </div>
-                        <img src="/assets/images/job-search.png" alt="job-search" className="h-[50vh] w-1/2 max-sm:w-fit max-sm:mt-5" />
-                    </div>
-                    <div className="w-1/2 max-sm:w-3/4 background-light700_dark400 relative flex min-h-[56px] grow items-center gap-1 rounded-xl px-4">
-                        <GlobalSearch type={"user-global-search"}/>
+                        <img src="/assets/images/job-search.png" alt="job-search" className="h-[50vh] max-sm:h-[30vh] w-1/2 max-sm:w-fit max-sm:mt-5" />
                     </div>
 
                 </div>

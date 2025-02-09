@@ -18,6 +18,7 @@ import AdminJobs from "./components/admin/AdminJobs";
 import JobPage from "./components/admin/JobPage";
 import ProtectedRouteAdmin from "./components/admin/ProtectedRouteAdmin";
 import ProtectedRouteUser from "./components/User/ProtectedRouteUser";
+import SearchResult from "./components/User/SearchResult";
 
 const appRouter = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/explore",
     element: <Browse />,
+  },
+  {
+    path: "/results",
+    element: <SearchResult />,
   },
   {
     path: "/description/:id",

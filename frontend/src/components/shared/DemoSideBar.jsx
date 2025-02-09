@@ -1,6 +1,4 @@
-'use client'
-
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
     Dialog,
     DialogBackdrop,
@@ -15,13 +13,9 @@ import {
 } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from '@heroicons/react/20/solid'
-import JobCard from './JobCard'
-import axios from 'axios'
 import { filters } from '@/lib'
 import { sortOptions } from '@/lib'
-
-import PaginationComponent from './Pagination'
-import { useLocation, useNavigate } from 'react-router-dom'
+import ProductGrid from './ProductGrid'
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -34,52 +28,6 @@ export default function DemoSideBar() {
         title: [],
         salary: []
     });
-    const [loading, setLoading] = useState(false)
-    const [jobs, setJobs] = useState([])
-    const [currentPage, setCurrentPage] = useState(1)
-    const [totalPages, setTotalPages] = useState(1)
-    const location = useLocation(); // For accessing the URL parameters
-    const navigate = useNavigate(); // For navigating to updated URLs
-    useEffect(() => {
-        const fetchAllJobs = async (limit = 10) => {
-            try {
-                setLoading(true); // Set loading to true when fetching
-                const res = await axios.post(
-                    `${import.meta.env.VITE_JOB_API_END_POINT}/get`,
-                    { limit, currentPage } // Send currentPage in the request body
-                );
-                console.log(res);
-
-                if (res.data.success) {
-                    setJobs(res.data.jobs || []); // Update jobs list
-                    setTotalPages(res.data.totalPages); // Update totalPages
-                }
-            } catch (error) {
-                console.error("Error fetching jobs:", error);
-            } finally {
-                setLoading(false); // Set loading to false after the fetch
-            }
-        };
-
-        fetchAllJobs(); // Fetch jobs when currentPage changes
-    }, [currentPage]); // Dependency on currentPage ensures effect runs when page changes
-
-    // Update the URL with the new page number when navigating between pages
-    const goToPage = (page) => {
-        if (page > 0 && page <= totalPages) {
-            setCurrentPage(page); // Update currentPage on page change
-            // Update URL query parameters to reflect current page
-            const searchParams = new URLSearchParams(location.search);
-            searchParams.set("page", page);
-            navigate(`${location.pathname}?${searchParams.toString()}`);
-        }
-    };
-    useEffect(() => {
-        const queryParams = new URLSearchParams(location.search);
-        const pageFromUrl = parseInt(queryParams.get("page")) || 1; // Default to 1 if no page in URL
-        setCurrentPage(pageFromUrl); // Set the currentPage from URL
-    }, [location.search]); // Run this effect whenever the URL changes
-
 
     const handleFilterChange = (filterType, value, isChecked) => {
         setSelectedFilters((prevFilters) => {
@@ -92,42 +40,6 @@ export default function DemoSideBar() {
             return updatedFilters;
         });
     };
-
-    const fetchFilteredJobs = async (filters) => {
-        try {
-            setLoading(true)
-            const response = await axios.post(
-                `${import.meta.env.VITE_JOB_API_END_POINT}/get`,
-                { filters, limit: 10 } // Include filters, keyword, and limit in the request body
-            );
-            if (!response.data.success) {
-                setJobs([]);
-
-            }
-            else {
-                setJobs(response.data.jobs)
-                setTotalPages(response.data.totalPages)
-
-            }
-            console.log(response.data);
-            console.log(response.data.totalPages, "These are total pages");
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false)
-        }
-    };
-
-
-    useEffect(() => {
-        if (selectedFilters.location.length || selectedFilters.title.length || selectedFilters.salary.length) {
-            fetchFilteredJobs(selectedFilters);
-        }
-
-    }, [selectedFilters]);
-
-
-
 
     return (
         <div className="w-full">
@@ -348,37 +260,7 @@ export default function DemoSideBar() {
 
                             {/* Product grid */}
                             <div >
-                                <div className=" md:grid md:grid-cols-2 md:grid-rows-3 xl:grid-cols-3 xl:grid-rows-2 gap-4">
-                                    {
-                                        loading ? (
-                                            <div>
-                                                loading
-                                            </div>
-                                        ) :
-                                            jobs.length > 0 ? (jobs.map((job, index) => (
-                                                <JobCard
-                                                    key={index}
-                                                    jobId={job._id}
-                                                    title={job.title}
-                                                    description={job.description}
-                                                    company={job.company.name}
-                                                    location={job.location}
-                                                    employmentType={job.employmentType}
-                                                    salary={job.salary}
-                                                    experience={job.experience}
-                                                    positions={job.positions}
-                                                    logo={job.company.logo}
-                                                />
-                                            ))) : (
-                                                <div>
-                                                    <p className='h1-bold text-center text-dark200_light900'>No jobs found</p>
-                                                </div>
-                                            )
-                                    }
-                                </div>
-                                <div className='mt-4'>
-                                    <PaginationComponent totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
-                                </div>
+                                <ProductGrid selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} />
                             </div>
                         </div>
                     </section>

@@ -52,7 +52,7 @@ const MobileNav = () => {
                     <SheetClose asChild>
                         <div className="flex gap-4 cursor-pointer h-8">
                             <img src="/assets/icons/home.svg" alt="" height={20} width={20} className="dark:invert" />
-                            <Link to={`/explore`} className="font-semibold text-xl ">Explore</Link>
+                            <Link to={`/results`} className="font-semibold text-xl ">Explore</Link>
                         </div>
                     </SheetClose>
 

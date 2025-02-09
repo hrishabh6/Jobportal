@@ -1,8 +1,9 @@
 import { Company } from "../models/company.model.js";
 import { Job } from "../models/job.model.js";
-
+import { processSearchString } from "../utils/constant.js";
 const SearchableAdminTypes = ["job", "company"];
 const SearchableTypes = ["job", "company"];
+
 export async function globalAdminSearch(req, res) {
   try {
     const { query, type } = req.body;
@@ -185,3 +186,122 @@ export async function globalUserSearch(req, res) {
   }
 }
 
+export const getSearchSuggestions = async (req, res) => {
+  try {
+    const { query } = req.query;
+    console.log("Query:", query);
+    if (!query || query.trim().length === 0) {
+      return res.status(200).json({ suggestions: [] });
+    }
+
+    const processedQuery = processSearchString(query);
+    const searchRegex = new RegExp(processedQuery, 'i');
+
+    // Parallel execution of job and company searches
+    const [jobResults, companyResults] = await Promise.all([
+      // Search for jobs
+      Job.aggregate([
+        {
+          $match: {
+            title: searchRegex,
+            status: 'open' // Only show active job listings
+          }
+        },
+        {
+          $lookup: {
+            from: 'companies',
+            localField: 'company',
+            foreignField: '_id',
+            as: 'companyInfo'
+          }
+        },
+        {
+          $unwind: '$companyInfo'
+        },
+        {
+          // Calculate relevance score
+          $addFields: {
+            relevanceScore: {
+              $sum: [
+                // Exact match gets highest score
+                { $cond: [{ $eq: [{ $toLower: '$title' }, query.toLowerCase()] }, 10, 0] },
+                // Starts with query gets high score
+                { $cond: [{ $regexMatch: { input: { $toLower: '$title' }, regex: new RegExp(`^${processedQuery}`, 'i') } }, 5, 0] },
+                // Contains all words gets medium score
+                { $cond: [{ $regexMatch: { input: { $toLower: '$title' }, regex: searchRegex } }, 3, 0] }
+              ]
+            }
+          }
+        },
+        {
+          $sort: { relevanceScore: -1 }
+        },
+        {
+          $limit: 4
+        },
+        {
+          $project: {
+            _id: 1,
+            title: 1,
+            companyName: '$companyInfo.name',
+            type: 'job'
+          }
+        }
+      ]),
+
+      // Search for companies
+      Company.aggregate([
+        {
+          $match: {
+            name: searchRegex
+          }
+        },
+        {
+          // Calculate relevance score for companies
+          $addFields: {
+            relevanceScore: {
+              $sum: [
+                { $cond: [{ $eq: [{ $toLower: '$name' }, query.toLowerCase()] }, 10, 0] },
+                { $cond: [{ $regexMatch: { input: { $toLower: '$name' }, regex: new RegExp(`^${processedQuery}`, 'i') } }, 5, 0] },
+                { $cond: [{ $regexMatch: { input: { $toLower: '$name' }, regex: searchRegex } }, 3, 0] }
+              ]
+            }
+          }
+        },
+        {
+          $sort: { relevanceScore: -1 }
+        },
+        {
+          $limit: 2
+        },
+        {
+          $project: {
+            _id: 1,
+            name: 1,
+            type: 'company'
+          }
+        }
+      ])
+    ]);
+
+    // Combine and format results
+    const suggestions = {
+      jobs: jobResults.map(job => ({
+        id: job._id,
+        text: job.title,
+        companyName: job.companyName,
+        type: 'job'
+      })),
+      companies: companyResults.map(company => ({
+        id: company._id,
+        text: company.name,
+        type: 'company'
+      }))
+    };
+
+     return res.status(200).json({data  : suggestions});
+  } catch (error) {
+    console.error('Search suggestion error:', error);
+    res.status(500).json({ message: 'Error fetching search suggestions' });
+  }
+};

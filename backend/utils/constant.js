@@ -24,3 +24,15 @@ export function timeAgo(date) {
     const years = Math.floor(months / 12);
     return `Posted ${years} years ago`;
 }
+
+export const processSearchString = (searchString) => {
+    // Remove extra spaces, make lowercase, and create regex-safe string
+    return searchString
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, ' ')
+      .split(' ')
+      .map(word => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      .join('.*');
+};
+  
